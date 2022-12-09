@@ -1,8 +1,37 @@
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsUserAlreadyExist } from '../../validation/rules/emailExist';
+import { ApiProperty } from '@nestjs/swagger';
+
 export class CreateUserDto {
-    readonly first_name: string
-    readonly last_name: string
-    readonly email: string
-    readonly password: string
-    readonly balance: string
-    readonly role: string
+  @IsNotEmpty()
+  @MinLength(2)
+  @ApiProperty({
+    description: 'First name',
+    minimum: 2,
+  })
+  readonly first_name: string;
+  @IsNotEmpty()
+  @MinLength(2)
+  @ApiProperty({
+    description: 'The last name of a person',
+    minimum: 2,
+  })
+  readonly last_name: string;
+  @IsEmail()
+  @IsUserAlreadyExist({
+    message: 'User $value already exists. Choose another name.',
+  })
+  @ApiProperty({
+    description: 'Person email',
+  })
+  readonly email: string;
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(8)
+  @ApiProperty({
+    description: 'Person password',
+  })
+  readonly password: string;
+  //readonly balance: string
+  //readonly roles: string
 }
