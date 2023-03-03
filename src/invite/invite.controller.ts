@@ -1,26 +1,19 @@
+import { Body, Controller, HttpCode, Post, Request, UseGuards } from "@nestjs/common";
+import { InviteService } from "./invite.service";
+import { UsersService } from "../users/users.service";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
+import { v4 as uuidv4 } from "uuid";
+import { Roles } from "../decorator/roles.decorator";
+import { Role } from "../enum/role.enum";
+import { RolesGuard } from "../guards/roles.guard";
 import {
-  Body,
-  Controller,
-  HttpCode,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
-import { InviteService } from './invite.service';
-import { UsersService } from '../users/users.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { v4 as uuidv4 } from 'uuid';
-import { Roles } from '../decorator/roles.decorator';
-import { Role } from '../enum/role.enum';
-import { RolesGuard } from '../guards/roles.guard';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiForbiddenResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+    ApiBearerAuth,
+    ApiBody,
+    ApiForbiddenResponse,
+    ApiOkResponse,
+    ApiTags,
+    ApiUnauthorizedResponse
+} from "@nestjs/swagger";
 
 @Controller('invite')
 @ApiTags('invite')
@@ -48,9 +41,10 @@ export class InviteController {
   @ApiForbiddenResponse({ description: 'Something wrong with validation' })
   async addInvite(@Body() param, @Request() req) {
     const user = await this.userService.findOne(req.user.email);
+    console.log(user)
     const address = `${req.protocol}://${req.get('Host')}/auth/register`;                   //todo search better method
       try {
-          const invite = await this.inviteService.createInvite(
+          return await this.inviteService.createInvite(
               {
                   email: param.email,
                   token: uuidv4(),
@@ -58,11 +52,8 @@ export class InviteController {
               },
               address,
           );
-          user.invites.push(invite);
-          user.save();
-          return invite;
       } catch (e) {
-        console.error(e.error())            //todo logger
+        console.error(e.error)            //todo logger
       }
   }
 }

@@ -12,6 +12,7 @@ export class RolesGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.get<string[]>(ROLES_KEY, context.getHandler());
+
     if (!roles) {
       return true;
     }
@@ -19,10 +20,8 @@ export class RolesGuard implements CanActivate {
 
     const getUser = await this.userService.findOne(user.email);
 
-    //console.log(user)
-
     const hasRole = () =>
-      getUser.roles.some((role) => !!roles.find((item) => item === role));
+      roles.includes(getUser.roles)
 
     return getUser && getUser.roles && hasRole();
   }

@@ -1,203 +1,278 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './schemas/user.schema';
-import * as mongoose from 'mongoose';
-import { Model } from 'mongoose';
-import { CreateUserDto } from './dto/create-user.dto';
-import { TransactionService } from '../transaction/transaction.service';
-import { Role } from '../enum/role.enum';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
+import { Injectable } from "@nestjs/common";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { Role } from "../enum/role.enum";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "../entity/user/user.entity";
+import { DataSource, In, Repository } from "typeorm";
+import * as bcrypt from "bcrypt";
+import { TransactionService } from "../transaction/transaction.service";
 
 @Injectable()
-export class UsersService implements OnModuleInit {
-  constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-    private transactionService: TransactionService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-    @InjectConnection() private readonly connection: mongoose.Connection,
-  ) {}
+export class UsersService {
+    constructor(
+        private transactionService: TransactionService,
+        private dataSource: DataSource,
+        //@Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+        @InjectRepository(User)
+        private usersRepository: Repository<User>
+    ) {
+    }
 
-  async onModuleInit() {
-    try {
-      const res = await this.userModel.find(); // this method returns user data exist in database (if any)
-      if (res.length === 0) {
-        const newUser = {
-          first_name: 'Admin',
-          last_name: 'Adminovich',
-          password: '12345678',
-          email: 'adminmail@gmail.com',
-          roles: [Role.Admin],
-          balance: 0,
+    // async onModuleInit() {
+    //   try {
+    //     const res = await this.userModel.find(); // this method returns user data exist in database (if any)
+    //     if (res.length === 0) {
+    //       const newUser = {
+    //         first_name: 'Admin',
+    //         last_name: 'Adminovich',
+    //         password: '12345678',
+    //         email: 'adminmail@gmail.com',
+    //         roles: [Role.Admin],
+    //         balance: 0,
+    //       };
+    //       const user = await this.userModel.create(newUser); // this method creates admin user in database
+    //     }
+    //   } catch (error) {
+    //     //this.logger.error(error.message());
+    //     throw error;
+    //   }
+    // }
+
+    async createUser(userData: CreateUserDto): Promise<User> {
+        const { password, ...result } = userData;
+        const passwordHash = {
+            password: await bcrypt.hash(password, 10)
         };
-        const user = await this.userModel.create(newUser); // this method creates admin user in database
-      }
-    } catch (error) {
-      this.logger.error(error.message());
-      throw error;
+        const data = {
+            ...result,
+            ...passwordHash
+        };
+        return await this.usersRepository.save(data);
     }
-  }
 
-  async createUser(userData: CreateUserDto): Promise<User> {
-    const user = await this.userModel.create(userData);
-    await user.save({ timestamps: { createdAt: true, updatedAt: true } });
-    return user;
-  }
+    async getUsersByRole(userRoles: Role[]): Promise<User[]> {
+        return this.usersRepository.find({
+            select: {
+                inviter: {
+                    id: true,
+                    first_name: true,
+                    last_name: true,
+                    email: true
+                },
+                invites: {
+                    id: true,
+                    accepted: true,
+                    email: true
+                },
+                transactions: {
+                    id: true,
+                    sum: true,
+                    isPercentage: true
+                }
+            },
+            relations: {
+                inviter: true,
+                invites: true,
+                transactions: true
+            },
+            where: {
+                roles: In(userRoles)
+            }
 
-  async getUsersByRole(role: Role[]): Promise<User[]> {
-    return this.userModel
-      .find({ roles: role })
-      .populate('transactions')
-      .populate('invites');
-    //.select('-password');
-  }
-
-  async getUserById(id: string): Promise<User> {
-    return this.userModel
-      .findById(id)
-      .populate('invites')
-      .populate('transactions');
-    //.select("-password");
-  }
-
-  async findOne(email: string): Promise<User> | null {
-    return await this.userModel.findOne({ email }).exec();
-  }
-
-  async addUsersTransaction(payload, money: number, isPercents: boolean) {
-    const transaction = await this.transactionService.createTransaction({
-      sum: money,
-      isPercentage: isPercents,
-      user: payload,
-    });
-    await transaction.save();
-    const user = await this.changeUserBalance(payload.email, money).then(
-      async () => {
-        return await this.changeUserRole(payload.email, Role.Investor);
-      },
-    );
-
-    if (user) {
-      user.transactions.push(transaction);
-      user.save();
-    } else {
-      console.log('Session have not contained user in transaction');             //todo add logger
+        });
     }
-  }
 
-  async changeUserBalance(
-    email: string,
-    money: number,
-    session = null,
-  ): Promise<User> {
-    return this.userModel
-      .findOneAndUpdate({ email }, { $inc: { balance: money } })
-      .session(session);
-  }
-
-  /**
-   *
-   * @param email users email
-   * @param role new role which need to set user
-   */
-  async changeUserRole(email: string, role: Role) {
-    return this.userModel.findOneAndUpdate(
-      { email },
-      {
-        roles: [role],
-      },
-    );
-  }
-
-  /**
-   * Recursive function for adding percentage in all levels
-   * @param sum profit sum
-   * @param user selected investor
-   * @returns {Promise<void>}
-   */
-  async addProfit(sum, user): Promise<void> {
-    await this.addUsersTransaction(user, sum, true);
-    const profit = sum / 10; // 10% for invited user
-
-    if (user.InviterId != null && profit > 0.01) {
-        console.log(user)
-      const tempUser = await this.getUserById(user.InviterId);
-      await this.addProfit(profit, tempUser);
+    async getUserById(id: number): Promise<User | null> {
+        return this.usersRepository.findOne({
+            select: {
+                inviter: {
+                    id: true,
+                    first_name: true,
+                    last_name: true,
+                    email: true
+                },
+                invites: {
+                    id: true,
+                    accepted: true,
+                    email: true
+                },
+                transactions: {
+                    id: true,
+                    sum: true,
+                    isPercentage: true
+                }
+            },
+            where: {
+                id: id
+            },
+            relations: {
+                inviter: true
+            }
+        });
     }
-  }
 
-  async getAllMoneyValue() {
-    return this.userModel.aggregate([
-      { $match: { roles: Role.Investor } },
-      {
-        $group: {
-          _id: null,
-          money: { $sum: '$balance' },
+    async findOne(
+        email: string,
+        transactions = false,
+        inviter = false,
+        invites = false
+    ): Promise<User> | null {
+        return await this.usersRepository.findOne({
+            where: {
+                email
+            },
+            relations: {
+                inviter: inviter,
+                transactions: transactions,
+                invites: invites
+            }
+        });
+    }
+
+    async addUsersTransaction(user, money: number, isPercents: boolean) {
+
+        await this.dataSource.manager.transaction(async (entityManager) => {
+            await this.transactionService.createTransaction({
+                sum: money,
+                isPercentage: isPercents,
+                user
+            });
+            await this.changeUserBalance(user, money).then(
+                async () => {
+                    return await this.changeUserRole(user, Role.Investor);
+                }
+            );
+        });
+    }
+
+    async changeUserBalance(
+        user: User,
+        money: number
+    ): Promise<User> {
+        const sum = (parseFloat(String(user.balance))) + money;
+        await this.usersRepository.update({ email: user.email }, { balance: sum });
+        return user;
+    }
+
+    /**
+     *
+     * @param user
+     * @param role new role which need to set user
+     */
+    async changeUserRole(user: User, role: Role) {
+        await this.usersRepository.update({ email: user.email }, { roles: role });
+    }
+
+    /**
+     * Recursive function for adding percentage in all levels
+     * @param sum profit sum
+     * @param user selected investor
+     * @returns {Promise<void>}
+     */
+    async addProfit(sum, user): Promise<void> {
+        await this.addUsersTransaction(user, sum, true);
+        const profit = sum * 0.1; // 10% for invited user
+
+        if (user.inviter && profit > 0.01) {
+            const tempUser = await this.getUserById(user.inviter.id);
+            await this.addProfit(profit, tempUser);
+        }
+    }
+
+    async getAllMoneyValue() {
+        return await this.usersRepository.sum("balance",
+            { roles: Role.Investor }
+        );
+    }
+
+    /**
+     * Function return data about startup(users quantity, all money in accounts)
+     */
+    async getStatistic(): Promise<Object> {
+        return {
+            users: await this.usersRepository.createQueryBuilder("user")
+                .where({
+                    "roles": Role.User
+                })
+                .getCount()
+            ,
+            investors: await this.usersRepository.createQueryBuilder("user")
+                .where({
+                    "roles": Role.Investor
+                })
+                .getCount(),
+            allMoney: await this.getAllMoneyValue()
+        };
+    }
+
+    async getMoney(money: number, adminEmail: string): Promise<number> {
+        const users = await this.getUsersByRole([Role.Investor]);
+        const admin = await this.findOne(adminEmail);
+        let profit: number = 0;
+        let sum: number = 0;
+
+        for (const user of users) {
+            if (money <= 0) break;
+            if (user.balance >= money) {
+                sum = money;
+                money = 0;
+            } else {
+                sum = user.balance;
+                money = money - user.balance;
+            }
+
+            const sendSum = await this.createTransaction(user, admin, sum);
+            profit = profit + Number(sendSum);
+        }
+
+        return profit;
+    }
+
+    async saveInviter(userId: number, inviter: User) {
+        const user = await this.usersRepository.findOne({
+            where: {
+                id: userId
+            },
+            relations: {
+                inviter: true
+            }
+        });
+        user.inviter = inviter;
+        await this.usersRepository.save(user);
+    }
+
+    async getUserWithPassword(email: string) {
+        return await this.usersRepository.createQueryBuilder("user")
+            .where({ email })
+            .addSelect("user.password")
+            .getOne();
+    }
+
+    private async createTransaction(user: User, admin: User, money: number) {
+        const queryRunner = this.dataSource.createQueryRunner();
+        const getSum = Number(user.balance) - money;
+
+        const addSum = Number(admin.balance) + money;
+
+        await queryRunner.startTransaction();
+        try {
+            await queryRunner.manager.update(User, { id: user.id }, { balance: getSum });
+            await queryRunner.manager.update(User, { id: admin.id }, { balance: addSum });
+            await queryRunner.commitTransaction();
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            money = 0;
+        } finally {
+            await queryRunner.release();
+        }
+        return money;
+    }
+
+    async updateUserProp(id: number, data: Object) {
+        await this.usersRepository.update({
+            id
         },
-      },
-    ]);
-  }
-
-  /**
-   * Function return data about startup(users quantity, all money in accounts)
-   */
-  async getStatistic(): Promise<Object> {
-    return {
-      users: await this.userModel.aggregate([
-        { $group: { _id: '$roles', count: { $sum: 1 } } },
-      ]),
-      allMoney: await this.getAllMoneyValue(),
-    };
-  }
-
-  async getMoney(money: number, adminEmail: string): Promise<number> {
-    const users = await this.getUsersByRole([Role.Investor]);
-    let profit = 0;
-    let sum = 0;
-
-    for (const user of users) {
-      if (money <= 0) break;
-      if (user.balance >= money) {
-        sum = money;
-        money = 0;
-      } else {
-        sum = user.balance;
-        money = money - user.balance;
-      }
-      const sendMoney = await this.sendMoneyFromInvestorToAdmin(
-        sum,
-        user.email,
-        adminEmail,
-      );
-      profit = profit + sendMoney;
+            data
+        )
     }
-    return profit;
-  }
-
-  /**
-   *
-   * @param money
-   * @param userEmail
-   * @param adminEmail
-   */
-  async sendMoneyFromInvestorToAdmin(
-    money: number,
-    userEmail: string,
-    adminEmail: string,
-  ) {
-    const session = await this.connection.startSession();
-    session.startTransaction();
-    try {
-      await this.changeUserBalance(userEmail, -money, session);
-      await this.changeUserBalance(adminEmail, money, session);
-      await session.commitTransaction();
-    } catch (error) {
-      money = 0;
-      await session.abortTransaction(); //todo add logger
-      throw error;
-    } finally {
-      await session.endSession();
-    }
-    return money;
-  }
 }

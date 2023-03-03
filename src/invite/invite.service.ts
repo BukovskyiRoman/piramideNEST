@@ -1,36 +1,55 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { InviteDocument, Invite } from './schemas/invite.schema';
-import { CreateInviteDto } from './dto/create-invite.dto';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
+import { Injectable } from "@nestjs/common";
+import { Queue } from "bull";
+import { InjectQueue } from "@nestjs/bull";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "../entity/user/user.entity";
+import { Repository } from "typeorm";
+import { Invite } from "../entity/invite/invite.entity";
 
 @Injectable()
 export class InviteService {
-  constructor(
-    @InjectModel(Invite.name) private inviteModel: Model<InviteDocument>,
-    @InjectQueue('mail') private mailQueue: Queue,
-  ) {}
+    constructor(
+        @InjectRepository(Invite)
+        private invitesRepository: Repository<Invite>,
+        @InjectQueue("mail") private mailQueue: Queue
+    ) {
+    }
 
-  async createInvite(invite: CreateInviteDto, inviteAddress: string) {
-    await this.mailQueue.add({
-      email: invite.email,
-      token: invite.token,
-      address: inviteAddress,
-    });
+    async createInvite(invite: { user: User; email: string; token: string }, inviteAddress: string) {
+        await this.mailQueue.add({
+            email: invite.email,
+            token: invite.token,
+            address: inviteAddress
+        });
+        const createdInvite = this.invitesRepository.create(invite);
+        // createdInvite.user = invite.user;
+        await this.invitesRepository.save(createdInvite);
+        return createdInvite;
+    }
 
-    return await this.inviteModel.create(invite);
-  }
-
-  async acceptInvite(token: string, email: string) {
-    return this.inviteModel
-      .findOneAndUpdate(
-        { token, email, accepted: false },
-        {
-          accepted: true,
-        },
-      )
-      .populate({ path: 'user', select: 'email' });
-  }
+    async acceptInvite(token: string, email: string): Promise<Invite> | null {
+        const invite = await this.invitesRepository.findOne({
+            where: {
+                token,
+                email
+            },
+            select: {
+                user: {
+                    id: true,
+                    first_name: true,
+                    last_name: true,
+                    email: true
+                }
+            },
+            relations: {
+                user: true
+            }
+        });
+        if (invite) {
+            invite.accepted = true;
+            await this.invitesRepository.save(invite);
+            return invite;
+        }
+        return null;
+    }
 }

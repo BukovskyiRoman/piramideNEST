@@ -19,7 +19,7 @@ export class CreateUserDto {
   readonly last_name: string;
   @IsEmail()
   @IsUserAlreadyExist({
-    message: 'User $value already exists. Choose another name.',
+    message: 'UserEntity $value already exists. Choose another name.',
   })
   @ApiProperty({
     description: 'Person email',

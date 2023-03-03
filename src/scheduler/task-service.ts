@@ -7,7 +7,7 @@ import { Role } from "../enum/role.enum";
 export class TaskService {
   constructor(private userService: UsersService) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async bonusesProcessor() {
       const investors = await this.userService.getUsersByRole([Role.Investor]);
 

@@ -1,18 +1,7 @@
-import {
-    Body,
-    Controller,
-    Get,
-    HttpCode,
-    Param, Patch,
-    Req,
-    Request,
-    UseGuards
-} from "@nestjs/common";
-import { Request as req } from 'express'
+import { Body, Controller, Get, HttpCode, Param, Patch, Req, UseGuards } from "@nestjs/common";
+
 import { UsersService } from "./users.service";
-import { User } from "./schemas/user.schema";
-import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { RolesGuard } from "../guards/roles.guard";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { Roles } from "../decorator/roles.decorator";
 import { Role } from "../enum/role.enum";
 import {
@@ -26,6 +15,8 @@ import {
     ApiTags,
     ApiUnauthorizedResponse
 } from "@nestjs/swagger";
+import { User } from "../entity/user/user.entity";
+import { RolesGuard } from "../guards/roles.guard";
 
 @ApiTags("users")
 @Controller("users")
@@ -43,8 +34,8 @@ export class UsersController {
         description: "Users id from DB",
         example: "638894735427264151f888ee"
     })
-    async getUserById(@Param("id") id: string) {
-        return await this.userService.getUserById(id);
+    async getUserById(@Param("id") id: string): Promise<User>|null {
+        return await this.userService.getUserById(parseInt(id));
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -61,7 +52,7 @@ export class UsersController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @HttpCode(204)
-    @Patch("invest|get")
+    @Patch(["get", "invest"])
     @Roles(Role.Investor, Role.User)
     @ApiBody({
         schema: {
@@ -75,9 +66,16 @@ export class UsersController {
     @ApiUnauthorizedResponse({ description: "Unauthorized user" })
     @ApiForbiddenResponse({ description: "Something wrong with validation" })
     @ApiNoContentResponse({ description: "Success" })
-    async changeUserBalance(@Request() req: req, @Body("money") money: number) {
-        money = req.path === '/users/invest' ? money : (- money);
-        await this.userService.addUsersTransaction(req.user, money, false);
+    async changeUserBalance(@Req() req, @Body("money") money: number) {
+        const user = await this.userService.findOne(req.user.email);
+
+        if (req.path === '/users/get' && money > 0) {
+           money = - money;
+        } else if (req.path === '/users/invest' && money < 0) {
+            money = Math.abs(money)
+        }
+
+        await this.userService.addUsersTransaction(user, money, false);
     }
 
     @Get("profile")
@@ -85,8 +83,10 @@ export class UsersController {
     @ApiOkResponse({ description: "Success" })
     @ApiUnauthorizedResponse({ description: "Unauthorized user" })
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(Role.Investor)
+    @Roles(Role.Investor, Role.User)
     async getUserProfile(@Req() req) {
-        return await this.userService.findOne(req.user.email);
+        console.log(req.session.visits)
+        console.log(req.cookies);
+        return await this.userService.findOne(req.user.email, true, true, true);
     }
 }

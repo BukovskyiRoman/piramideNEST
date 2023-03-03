@@ -1,4 +1,5 @@
-import { User } from '../../users/schemas/user.schema';
+//import { UserEntity } from '../../users/schemas/user.schema';
+import { User } from "../../entity/user/user.entity";
 
 export class CreateInviteDto {
   email: string;
