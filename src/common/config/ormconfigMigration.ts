@@ -17,6 +17,7 @@ const config = new DataSource({
         path.resolve(`${__dirname}/../../db/migrations/*{.ts,.js}`)
     ],
     migrationsTableName: "migrations",
+    migrationsRun: true,
     logging: true,
     synchronize: false
 });

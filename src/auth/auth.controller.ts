@@ -6,7 +6,7 @@ import {
     Body,
     Query,
     Inject,
-    HttpCode, Res
+    HttpCode, Res, Get
 } from "@nestjs/common";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { UsersService } from "../users/users.service";
@@ -92,5 +92,16 @@ export class AuthController {
             }
         }
         return newUser;
+    }
+
+    /**
+     * Test method 
+     */
+    @Get()
+    async getDashboard() {
+        return {
+            users: 5,
+            greeting: "Hello dear friend"
+        }
     }
 }
