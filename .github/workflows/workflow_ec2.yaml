@@ -6,7 +6,7 @@ jobs:
   merge-PR:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install SSH key
