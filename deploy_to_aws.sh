@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo 'Starting to Deploy...'
 ssh ubuntu@54.160.69.166 " sudo docker image prune -f
         cd app
