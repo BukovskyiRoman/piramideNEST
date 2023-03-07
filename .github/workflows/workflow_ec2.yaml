@@ -4,17 +4,16 @@ on:
     branches: [ master ]
 jobs:
   merge-PR:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-        - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
-        - name: Checkout
-          uses: actions/checkout@v2
-        - name: Install SSH key
-          uses: shimataro/ssh-key-action@v2
-          with:
-              key: ${{ secrets.SSH_KEY }}
-              name: id_rsa
-              known_hosts: ${{ secrets.KNOWN_HOSTS }}
-        - name: rsync over ssh
-          run: ./deploy_to_aws.sh
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+            key: ${{ secrets.SSH_KEY }}
+            name: id_rsa
+            known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: rsync over ssh
+        run: ./deploy_to_aws.sh
