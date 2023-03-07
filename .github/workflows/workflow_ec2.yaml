@@ -7,3 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: rsync over ssh
+        run: ./deploy_to_aws.sh
