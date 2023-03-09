@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
-      - run: curl -v telnet://${{ secrets.KNOWN_HOSTS }}:5000
+#      - run: curl -v telnet://${{ secrets.KNOWN_HOSTS }}:5000
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install SSH key
@@ -20,3 +20,8 @@ jobs:
 #        run: ./deploy_to_aws.sh
       - name: rsync copy files
         run: rsync -avz ./dist/ ubuntu@${{ secrets.KNOWN_HOSTS  }}:/home/app/piramideNEST/dist/
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          name: id_rsa
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
