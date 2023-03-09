@@ -18,8 +18,12 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             name: id_rsa
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: rsync over ssh
-        run: ./deploy_to_aws.sh
+      - name: ssh connect
+        run: |
+          ssh ubuntu@54.160.69.166
+          echo 'connected'
+#      - name: rsync over ssh
+#        run: ./deploy_to_aws.sh
 #      - name: rsync deployments
 #        uses: burnett01/rsync-deployments@5.2.1
 #        with:
