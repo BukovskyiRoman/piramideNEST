@@ -22,9 +22,9 @@ jobs:
         uses: burnett01/rsync-deployments@5.2.1
         with:
             switches: -avzr --delete
-            path: dist/
-            remote_path: /app/piramideNEST/dist/
+            path: /
+            remote_path: /app/piramideNEST/
             remote_host: ${{ secrets.KNOWN_HOSTS }}
-            remote_port: 5000
+            remote_port: 22
             remote_user: ubuntu
             remote_key: ${{ secrets.SSH_KEY }}
