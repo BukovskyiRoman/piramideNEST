@@ -9,11 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
-#      - run: curl -v telnet://${{ secrets.KNOWN_HOSTS }}:5000
       - name: Get repository code
         uses: actions/checkout@v3
-#      - name: install dependencies
-#        run: npm run ci
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:

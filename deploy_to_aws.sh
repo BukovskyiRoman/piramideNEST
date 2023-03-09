@@ -1,9 +1,8 @@
-#!/bin/sh -l
+#!/bin/sh
 
 echo 'Starting to Deploy...'
 ssh ubuntu@54.160.69.166 " sudo docker image prune -f
-        cd app
-        cd piramideNEST
+        cd app/piramideNEST
         sudo docker-compose down
         git fetch origin
         git reset --hard origin/develop  &&  echo 'You are doing well'
