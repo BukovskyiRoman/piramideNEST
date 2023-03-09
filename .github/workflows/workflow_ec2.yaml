@@ -8,8 +8,10 @@ jobs:
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
 #      - run: curl -v telnet://${{ secrets.KNOWN_HOSTS }}:5000
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Get repository code
+        uses: actions/checkout@v3
+#      - name: install dependencies
+#        run: npm run ci
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -18,23 +20,14 @@ jobs:
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
 #      - name: rsync over ssh
 #        run: ./deploy_to_aws.sh
-#      - name: rsync deployments
-#        uses: burnett01/rsync-deployments@5.2.1
-#        with:
-#            switches: -avzr --delete
-#            path: /
-#            remote_path: /app/piramideNEST/
-#            remote_host: ${{ secrets.KNOWN_HOSTS }}
-#            remote_port: 22
-#            remote_user: ubuntu
-#            remote_key: ${{ secrets.SSH_KEY }}
-      - name: multiple command
-        uses: appleboy/ssh-action@v0.1.8
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@5.2.1
         with:
-          host: ${{ secrets.KNOWN_HOSTS }}
-          username: ubuntu
-          key: ${{ secrets.SSH_KEY}}
-          port: 5000
-          script: |
-            whoami
-            ls -al
+            switches: -avzr --delete
+            path: /
+            remote_path: /app/piramideNEST/
+            remote_host: ${{ secrets.KNOWN_HOSTS }}
+            remote_port: 22
+            remote_user: ubuntu
+            remote_key: ${{ secrets.SSH_KEY }}
+
