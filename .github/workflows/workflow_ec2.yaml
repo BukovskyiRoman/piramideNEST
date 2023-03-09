@@ -6,7 +6,6 @@ on:
     types: [ closed ]
 jobs:
   merge-PR:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
