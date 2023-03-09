@@ -19,4 +19,4 @@ jobs:
 #      - name: rsync over ssh
 #        run: ./deploy_to_aws.sh
       - name: rsync copy files
-        run: rsync -avz ./dist/ ubuntu@${{ secrets.KNOWN_HOSTS  }}:/home/app/piramideNEST/dist/
+        run: rsync -azLvv --progress -e 'ssh -p5000 -vvv' --exclude 'xxx' ./dist/ ubuntu@${{ secrets.KNOWN_HOSTS  }}:/home/app/piramideNEST/dist/
