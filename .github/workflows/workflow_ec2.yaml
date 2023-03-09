@@ -25,5 +25,6 @@ jobs:
             path: dist/
             remote_path: /app/piramideNEST/dist/
             remote_host: ${{ secrets.KNOWN_HOSTS }}
+            remote_port: 5000
             remote_user: ubuntu
             remote_key: ${{ secrets.SSH_KEY }}
