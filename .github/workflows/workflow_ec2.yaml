@@ -16,5 +16,7 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             name: id_rsa
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: rsync over ssh
-        run: ./deploy_to_aws.sh
+#      - name: rsync over ssh
+#        run: ./deploy_to_aws.sh
+      - name: rsync copy files
+        run: rsync -avz ./dist/ ubuntu@${{ secrets.KNOWN_HOSTS  }}:/home/app/piramideNEST/dist/
