@@ -6,7 +6,6 @@ on:
     types: [ closed ]
 jobs:
   merge-PR:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
@@ -21,6 +20,7 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             name: id_rsa
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - uses: actions/checkout@v2
       - name: rsync over ssh
         run: ./deploy_to_aws.sh
 #      - name: rsync deployments
