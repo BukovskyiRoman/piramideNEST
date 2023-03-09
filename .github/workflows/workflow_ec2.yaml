@@ -1,9 +1,12 @@
 name: Deploy EC2
 on:
   push:
-    branches: [ master ]
+    branches: [ dev ]
+  pull_request:
+    types: [ closed ]
 jobs:
   merge-PR:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
@@ -18,7 +21,7 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             name: id_rsa
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
-#      - name: rsync over ssh
+      - name: rsync over ssh
         run: ./deploy_to_aws.sh
 #      - name: rsync deployments
 #        uses: burnett01/rsync-deployments@5.2.1
