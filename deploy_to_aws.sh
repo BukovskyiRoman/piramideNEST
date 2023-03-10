@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo 'Starting to Deploy...'
-ssh ubuntu@54.160.69.166 " sudo docker image prune -f
+ssh ubuntu@54.82.1.40 " sudo docker image prune -f
         cd app/piramideNEST
         sudo docker-compose down
         git fetch origin
