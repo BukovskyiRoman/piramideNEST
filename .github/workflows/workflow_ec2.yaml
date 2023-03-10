@@ -23,7 +23,6 @@ jobs:
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.KNOWN_HOSTS }}
-          password: ${{ secrets.PASSWORD }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
