@@ -31,7 +31,7 @@ jobs:
             cd app
             cd piramideNEST
             sudo docker compose down
-            docker image prune -f
+            sudo docker image prune -f
             git pull
             git reset --hard origin/dev  &&  echo 'You are doing well'
             sudo docker compose up -d
