@@ -17,8 +17,8 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             name: id_rsa
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: rsync over ssh
-        run: ./deploy_to_aws.sh
+#      - name: rsync over ssh
+#        run: ./deploy_to_aws.sh
       - name: multiple command
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -28,11 +28,11 @@ jobs:
           username: ubuntu
           script: |
             whoami
-            sudo docker image prune -f
             cd app
             cd piramideNEST
             sudo docker compose down
-            git fetch origin
+            docker image prune -f
+            git pull
             git reset --hard origin/dev  &&  echo 'You are doing well'
             sudo docker compose up -d
 #      - name: rsync deployments
