@@ -1,6 +1,6 @@
 name: Deploy EC2
 on:
-  push:
+  pull_request:
     branches: [ main ]
 jobs:
   merge-PR:

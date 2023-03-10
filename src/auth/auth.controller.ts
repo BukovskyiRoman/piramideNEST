@@ -101,8 +101,8 @@ export class AuthController {
     async getDashboard() {
         return {
             users: 5,
-            greeting: "Hello dear friend!",
-            deploy: 10,
+            greeting: "Hello dear friends",
+            deploy: 11,
             success: true
         }
     }
