@@ -28,6 +28,7 @@ jobs:
           username: ubuntu
           script: |
             whoami
+            cd app
             ls -al
 #      - name: rsync deployments
 #        uses: burnett01/rsync-deployments@5.2.1
