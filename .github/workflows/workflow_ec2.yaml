@@ -1,33 +1,35 @@
 name: Deploy EC2
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 jobs:
   merge-PR:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
-#      - run: curl -v telnet://${{ secrets.KNOWN_HOSTS }}:5000
       - name: Get repository code
         uses: actions/checkout@v3
-#      - name: install dependencies
-#        run: npm run ci
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
             key: ${{ secrets.SSH_KEY }}
             name: id_rsa
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
-#      - name: rsync over ssh
-        run: ./deploy_to_aws.sh
-#      - name: rsync deployments
-#        uses: burnett01/rsync-deployments@5.2.1
-#        with:
-#            switches: -avzr --delete
-#            path: /
-#            remote_path: /app/piramideNEST/
-#            remote_host: ${{ secrets.KNOWN_HOSTS }}
-#            remote_port: 22
-#            remote_user: ubuntu
-#            remote_key: ${{ secrets.SSH_KEY }}
+      - name: multiple command
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.KNOWN_HOSTS }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          username: ubuntu
+          script: |
+            whoami
+            cd app
+            cd piramideNEST
+            sudo docker compose down
+            sudo docker rm $(docker ps --filter status=exited -q)
+            sudo docker image prune -f
+            git fetch origin
+            git reset --hard origin/dev  &&  echo 'You are doing well'
+            sudo docker compose build
+            sudo docker compose up -d
 

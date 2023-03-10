@@ -95,13 +95,14 @@ export class AuthController {
     }
 
     /**
-     * Test method 
+     * Test method
      */
     @Get()
     async getDashboard() {
         return {
             users: 5,
-            greeting: "Hello dear friend"
+            greeting: "Hello dear friend!",
+            deploy: 9
         }
     }
 }
