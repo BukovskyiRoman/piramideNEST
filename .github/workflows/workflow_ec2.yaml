@@ -25,6 +25,7 @@ jobs:
           host: ${{ secrets.KNOWN_HOSTS }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
+          username: ubuntu
           script: |
             whoami
             ls -al
