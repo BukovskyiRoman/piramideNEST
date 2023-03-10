@@ -102,7 +102,7 @@ export class AuthController {
         return {
             users: 5,
             greeting: "Hello dear friend!",
-            deploy: 8
+            deploy: 9
         }
     }
 }

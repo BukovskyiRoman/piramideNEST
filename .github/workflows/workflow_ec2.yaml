@@ -1,14 +1,11 @@
 name: Deploy EC2
 on:
   push:
-    branches: [ dev ]
-  pull_request:
-    types: [ closed ]
+    branches: [ main ]
 jobs:
   merge-PR:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event. Key ${{ secrets.SSH_KEY }}"
       - name: Get repository code
         uses: actions/checkout@v3
       - name: Install SSH key
@@ -17,8 +14,6 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             name: id_rsa
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
-#      - name: rsync over ssh
-#        run: ./deploy_to_aws.sh
       - name: multiple command
         uses: appleboy/ssh-action@v0.1.8
         with:
