@@ -19,6 +19,16 @@ jobs:
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: rsync over ssh
         run: ./deploy_to_aws.sh
+      - name: multiple command
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.KNOWN_HOSTS }}
+          password: ${{ secrets.PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            whoami
+            ls -al
 #      - name: rsync deployments
 #        uses: burnett01/rsync-deployments@5.2.1
 #        with:
