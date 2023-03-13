@@ -22,20 +22,20 @@ export default class LoginForm extends React.Component {
     }
 
     handleSubmit(event) {
-        //alert("email, що було надіслано: " + this.state.email);
-        //alert("password, що було надіслано: " + this.state.password);
         fetch('http://107.23.119.30:5000/auth/login', {
             method: "POST",
             headers: {
                 'Content-type': 'application/json'
             },
-            body: JSON.stringify(this.state)
+            body: JSON.stringify({
+                username: this.state.email,
+                password: this.state.password
+            })
         })
             .then((response) => response.json())
             .then((result) => {
                 console.log(result)
             })
-        console.log('fsdfsd')
         event.preventDefault();
     }
 
@@ -60,6 +60,7 @@ export default class LoginForm extends React.Component {
                             w-full
                             "
                             type="text"
+                            name="username"
                             value={this.state.email}
                             onChange={this.emailChange}
                         />
@@ -79,6 +80,7 @@ export default class LoginForm extends React.Component {
                             w-full
                             "
                             type="text"
+                            name="password"
                             value={this.state.password}
                             onChange={this.passwordChange}
                         />
