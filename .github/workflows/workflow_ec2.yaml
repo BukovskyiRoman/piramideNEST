@@ -29,7 +29,7 @@ jobs:
             sudo docker rm $(sudo docker ps --filter status=exited -q)
             sudo docker image prune -f
             git fetch origin
-            git reset --hard origin/dev  &&  echo 'You are doing well'
+            git reset --hard origin/master  &&  echo 'You are doing well'
             sudo docker compose build
             sudo docker compose up -d
 
