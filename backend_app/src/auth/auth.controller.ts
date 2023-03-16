@@ -100,9 +100,9 @@ export class AuthController {
     @Get()
     async getDashboard() {
         return {
-            users: 5,
+            users: 999,
             greeting: "Hello dear friends",
-            deploy: 11,
+            deploy: 12,
             success: true
         }
     }
