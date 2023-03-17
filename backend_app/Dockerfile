@@ -1,10 +1,10 @@
-FROM node
+FROM node:19-alpine
 
-RUN mkdir -p /usr/src/app/server
-WORKDIR /usr/src/app/server
+#RUN mkdir -p /usr/src/app/server
+WORKDIR /app/server
 
-COPY package*.json ./
-COPY tsconfig*.json ./
+COPY . .
+COPY . .
 
 RUN npm install --force
 RUN npm install db-migrate-pg --force

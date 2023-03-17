@@ -1,9 +1,9 @@
-FROM node
+FROM node:19-alpine
 
-RUN mkdir -p /usr/src/app/client
-WORKDIR /usr/src/app/client
+#RUN mkdir -p /usr/src/app/client
+WORKDIR /app/client
 
-COPY package*.json ./
+COPY package*.json .
 
 RUN npm install --force
 

@@ -1,8 +1,10 @@
 version: '3'
 services:
   nest-app:
+    container_name: nest-app
     build:
       context: ./backend_app
+      dockerfile: Dockerfile
     restart: always
     ports:
       - 5000:5000
@@ -14,11 +16,15 @@ services:
       -POSTGRES_USER: "test"
       -POSTGRES_PASSWORD: "123456789"
   react-app:
+    container_name: react-app
     build:
-      context: ./front_app
+      context: front_app
+      dockerfile: Dockerfile
     restart: always
     ports:
       - 3000:3000
+    depends_on:
+      - nest-app
   postgres:
     container_name: postgres_container
     image: postgres
@@ -67,7 +73,7 @@ services:
       - 6000:6379
   migration:
     build:
-      context: .
+      context: ./backend_app
     command:
       [
         "./wait-for-it/wait-for-it.sh",
