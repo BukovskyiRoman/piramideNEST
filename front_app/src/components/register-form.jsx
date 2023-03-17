@@ -36,7 +36,7 @@ export default class RegisterForm extends React.Component {
     }
 
     handleSubmit(event) {
-        const url = "nest-app:5000"
+        const url = " 107.23.119.30:5000"
         fetch(url + "/auth/register", {
             method: "POST",
             headers: {
