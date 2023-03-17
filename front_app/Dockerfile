@@ -1,6 +1,5 @@
 FROM node:19-alpine
 
-#RUN mkdir -p /usr/src/app/client
 WORKDIR /app/client
 
 COPY package*.json .
