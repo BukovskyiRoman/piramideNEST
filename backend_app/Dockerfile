@@ -1,18 +1,18 @@
-FROM node
+FROM node:19-alpine
 
-RUN mkdir -p /usr/src/app/server
-WORKDIR /usr/src/app/server
+WORKDIR /app/server
 
-COPY package*.json ./
-COPY tsconfig*.json ./
+COPY package*.json .
+COPY tsconfig.json .
 
-RUN npm install --force
-RUN npm install db-migrate-pg --force
+RUN npm ci --force &&\
+    npm install db-migrate-pg --force
 
 COPY . .
 
-RUN git clone https://github.com/vishnubob/wait-for-it.git
-
-RUN npm run build
+RUN apk update &&\
+    apk add git &&\
+    git clone https://github.com/vishnubob/wait-for-it.git &&\
+    npm run build
 
 CMD [ "node", "dist/main.js"]
