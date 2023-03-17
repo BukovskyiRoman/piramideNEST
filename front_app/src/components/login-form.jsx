@@ -20,7 +20,9 @@ export default function LoginForm() {
     }
 
     function handleSubmit(event) {
-        fetch("http://107.23.119.30:5000/auth/login", {
+        //const url = "localhost:5000"
+        const url = "http://107.23.119.30:5000"
+        fetch(url + "/auth/login", {
             method: "POST",
             headers: {
                 "Content-type": "application/json"
