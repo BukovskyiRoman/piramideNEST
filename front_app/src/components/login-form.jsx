@@ -21,8 +21,8 @@ export default function LoginForm() {
 
     function handleSubmit(event) {
         //const url = "localhost:5000"
-        //const url = "http://107.23.119.30:5000"
-        const url = "nest-app:5000"
+        const url = "http://107.23.119.30:5000"
+        //const url = "nest-app:5000"
         fetch(url + "/auth/login", {
             method: "POST",
             headers: {
