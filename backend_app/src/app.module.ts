@@ -19,6 +19,8 @@ import pgconfig from "./common/config/pg.config";
 import { DataSource } from "typeorm";
 import { UploadController } from './upload/upload.controller';
 import { UploadModule } from './upload/upload.module';
+import { NewsController } from './news/news.controller';
+import { NewsModule } from './news/news.module';
 
 @Module({
     imports: [
@@ -71,7 +73,8 @@ import { UploadModule } from './upload/upload.module';
         TransactionModule,
         InviteModule,
         AdminModule,
-        UploadModule
+        UploadModule,
+        NewsModule
     ],
     controllers: [],
     providers: [

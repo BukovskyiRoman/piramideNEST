@@ -23,7 +23,7 @@ export default class MainComponent extends React.Component {
 
     render() {
         return (
-            <div className="border-2 border-b-blue-200 p-2">
+            <div className="flex border-2 border-b-blue-200 p-2 ">
                 <h1>Home page</h1>
                 <p>{this.state.message}</p>
             </div>

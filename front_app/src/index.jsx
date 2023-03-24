@@ -13,6 +13,7 @@ import ProfilePage from "./routes/profile-page";
 import { Provider } from "react-redux";
 import store from './app/store'
 import ChatPage from "./routes/chat-page";
+import NewsPage from "./routes/news-page";
 
 const router = createBrowserRouter([
     {
@@ -41,13 +42,13 @@ const router = createBrowserRouter([
     },
     {
         path: "/news",
-        element: <di>News page</di>
+        element: <NewsPage />
     }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
-        <div className="bg-blue-100 h-screen w-2/3 ml-auto mr-auto">
+        <div className="bg-gradient-to-r from-blue-50 to-pink-50 w-2/3 ml-auto mr-auto h-full rounded-xl">
             <Provider store={store}>
                 <RouterProvider router={router} />
             </Provider>

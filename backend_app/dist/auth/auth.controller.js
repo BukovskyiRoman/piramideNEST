@@ -77,9 +77,9 @@ let AuthController = class AuthController {
     }
     async getDashboard() {
         return {
-            users: 5,
+            users: 999,
             greeting: "Hello dear friends",
-            deploy: 11,
+            deploy: 15,
             success: true
         };
     }

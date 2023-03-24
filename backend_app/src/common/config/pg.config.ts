@@ -20,7 +20,7 @@ export default registerAs("database", (): PostgresConnectionOptions => ({
             ],
             migrationsTableName: "migrations",
             synchronize: false,
-            logging: true,
+            logging: false,
             migrationsRun: true
         } as PostgresConnectionOptions
     )
