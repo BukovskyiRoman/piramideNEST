@@ -22,7 +22,7 @@ export class TaskService {
         });
     }
 
-    @Cron(CronExpression.EVERY_MINUTE)
+    @Cron(CronExpression.EVERY_HOUR)
     async parseNews() {
         await this.newsService.parseNews();
     }
