@@ -8,14 +8,13 @@ export default function ProfilePage() {
     const [lastName, setLastName] = useState(null);
     const [balance, setBalance] = useState(0);
     const [email, setEmail] = useState(null);
-    //const [token, setToken] = useState(null);
 
     const jwt = useSelector(state => state.auth.token);
 
-
     useEffect(() => {
+        const url = 'http://localhost:5000'
         if (jwt) {
-            fetch("http://107.23.119.30:5000/users/profile", {
+            fetch(`${url}/users/profile`, {
                 method: "GET",
                 headers: {
                     "Content-type": "application/json",

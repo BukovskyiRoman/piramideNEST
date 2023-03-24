@@ -5,7 +5,7 @@ const process = require("process");
 const path = require("path");
 exports.default = (0, config_1.registerAs)("database", () => ({
     type: "postgres",
-    host: 'postgres',
+    host: "localhost",
     port: Number(process.env.DATABASE_PORT),
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
@@ -18,7 +18,7 @@ exports.default = (0, config_1.registerAs)("database", () => ({
     ],
     migrationsTableName: "migrations",
     synchronize: false,
-    logging: true,
+    logging: false,
     migrationsRun: true
 }));
 //# sourceMappingURL=pg.config.js.map

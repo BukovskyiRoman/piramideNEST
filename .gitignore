@@ -1,4 +1,5 @@
 # compiled output
+http_ca.crt
 /dist
 /node_modules
 /uploads

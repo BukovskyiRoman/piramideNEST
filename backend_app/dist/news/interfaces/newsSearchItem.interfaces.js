@@ -1,0 +1,1 @@
+//# sourceMappingURL=newsSearchItem.interfaces.js.map

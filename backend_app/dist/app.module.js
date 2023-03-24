@@ -26,6 +26,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const pg_config_1 = require("./common/config/pg.config");
 const typeorm_2 = require("typeorm");
 const upload_module_1 = require("./upload/upload.module");
+const news_module_1 = require("./news/news.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -80,7 +81,8 @@ AppModule = __decorate([
             transaction_module_1.TransactionModule,
             invite_module_1.InviteModule,
             admin_module_1.AdminModule,
-            upload_module_1.UploadModule
+            upload_module_1.UploadModule,
+            news_module_1.NewsModule
         ],
         controllers: [],
         providers: [

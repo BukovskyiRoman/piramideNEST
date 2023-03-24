@@ -14,9 +14,11 @@ const common_1 = require("@nestjs/common");
 const schedule_1 = require("@nestjs/schedule");
 const users_service_1 = require("../users/users.service");
 const role_enum_1 = require("../enum/role.enum");
+const news_service_1 = require("../news/news.service");
 let TaskService = class TaskService {
-    constructor(userService) {
+    constructor(userService, newsService) {
         this.userService = userService;
+        this.newsService = newsService;
     }
     async bonusesProcessor() {
         const investors = await this.userService.getUsersByRole([role_enum_1.Role.Investor]);
@@ -25,6 +27,9 @@ let TaskService = class TaskService {
             this.userService.addProfit(profit, investor);
         });
     }
+    async parseNews() {
+        await this.newsService.parseNews();
+    }
 };
 __decorate([
     (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_DAY_AT_1AM),
@@ -32,9 +37,16 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], TaskService.prototype, "bonusesProcessor", null);
+__decorate([
+    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_MINUTE),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], TaskService.prototype, "parseNews", null);
 TaskService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [users_service_1.UsersService])
+    __metadata("design:paramtypes", [users_service_1.UsersService,
+        news_service_1.NewsService])
 ], TaskService);
 exports.TaskService = TaskService;
 //# sourceMappingURL=task-service.js.map

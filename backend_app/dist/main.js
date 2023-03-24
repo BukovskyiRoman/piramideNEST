@@ -13,7 +13,10 @@ const swagger_1 = require("@nestjs/swagger");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, {
         cors: {
-            origin: 'http://localhost:3000',
+            origin: [
+                'http://localhost:3000',
+                'http://107.23.119.30:3000'
+            ],
             credentials: true,
         }
     });
