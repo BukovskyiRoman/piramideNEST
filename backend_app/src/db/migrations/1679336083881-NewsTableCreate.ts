@@ -1,5 +1,4 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
-import { Role } from "../../enum/role.enum";
 
 export class NewsTableCreate1679336083881 implements MigrationInterface {
 

@@ -11,6 +11,9 @@ export declare class NewsService {
         pagination: {
             currentPage: number;
             total: number;
+            prevPage: number;
+            nextPage: number;
+            perPage: number;
         };
     }>;
     parseNews(): Promise<void>;

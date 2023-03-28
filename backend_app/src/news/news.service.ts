@@ -22,9 +22,8 @@ export class NewsService {
 
     async getAllNews(page: number) {
         const perPage = 5         //todo 5 to env
-        const skip = (page - 1) * perPage + 1
-        console.log(page);
-        console.log(skip);
+        const skip = (page - 1) * (perPage)
+
         const total = await this.newsRepository.count()
         const news = await this.newsRepository.find({
             order: {
@@ -37,7 +36,10 @@ export class NewsService {
             news,
             pagination: {
                 currentPage: page ? page : 1,
-                total
+                total,
+                prevPage: Number(page) - 1,
+                nextPage: Number(page) + 1,
+                perPage,
             }
         };
     }

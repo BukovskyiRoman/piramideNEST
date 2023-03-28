@@ -4,7 +4,7 @@ import MainHeaderImage from "../components/main-header-image";
 import LoginForm from "../components/login-form";
 import FooterComponent from "../components/footer";
 
-export default function LoginPage(props) {
+const LoginPage = (props) => {
         return (
             <div>
                 <MainHeaderImage />
@@ -14,3 +14,4 @@ export default function LoginPage(props) {
             </div>
         );
     }
+ export default LoginPage

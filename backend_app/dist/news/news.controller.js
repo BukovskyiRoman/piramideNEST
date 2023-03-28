@@ -23,7 +23,6 @@ let NewsController = class NewsController {
         this.logger = logger;
     }
     async getNews(page) {
-        console.log(`page=${page}`);
         return await this.newsService.getAllNews(page ? page : 1);
     }
     async searchNews(search) {

@@ -1,6 +1,7 @@
 import React from "react";
 import MainHeaderImage from "../components/main-header-image";
 import MainMenu from "../components/main-menu";
+import FooterComponent from "../components/footer";
 
 function ChatPage(props) {
     return (
@@ -10,6 +11,7 @@ function ChatPage(props) {
             <div>
                 <h1>Chat page</h1>
             </div>
+            <FooterComponent />
         </div>
     );
 }

@@ -36,9 +36,9 @@ export default class RegisterForm extends React.Component {
     }
 
     handleSubmit(event) {
-        const url = 'http://localhost:5000'
+        const url = process.env.URL_BACK;
         //const url = " 107.23.119.30:5000"
-        fetch(url + "/auth/register", {
+        fetch("http://localhost:5000/auth/register", {
             method: "POST",
             headers: {
                 "Content-type": "application/json"

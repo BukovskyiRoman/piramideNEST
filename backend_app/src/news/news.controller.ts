@@ -12,7 +12,7 @@ export class NewsController {
     }
     @Get()
     async getNews(@Query('page') page) {
-        console.log(`page=${page}`);
+        //console.log(`page=${page}`);
         return await this.newsService.getAllNews(page ? page : 1)
     }
 

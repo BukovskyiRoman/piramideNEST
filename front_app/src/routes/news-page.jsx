@@ -13,12 +13,15 @@ export default function NewsPage() {
     const [news, setNews] = useState([]);
     const [pagination, setPagination] = useState({
         total: 0,
-        currentPage: 1
+        currentPage: 1,
+        prevPage: 0,
+        nextPage: 2,
+        perPage: 5
     })
 
-    useEffect(() => {
+    function getNews(page) {
         const url = "http://localhost:5000";
-        fetch(`${url}/news?page${pagination.currentPage}`, {
+        fetch(`${url}/news?page=${page}`, {
             method: "GET",
             headers: {
                 "Content-type": "application/json"
@@ -30,6 +33,15 @@ export default function NewsPage() {
                 setNews(result.news);
                 setPagination(result.pagination)
             });
+    }
+
+    const paginate = (pageNumber) => {
+        getNews(pageNumber);
+    };
+
+    useEffect(() => {
+        //const url = process.env.URL_BACK;
+        getNews(pagination.currentPage)
     }, []);
 
     function searchChange(event) {
@@ -38,6 +50,7 @@ export default function NewsPage() {
 
     function handleSubmit(event) {
         const url = "http://localhost:5000";
+        //const url = process.env.URL_BACK;
         //const url = "http://107.23.119.30:5000"
         //const url = "nest-app:5000"
         fetch(`${url}/news/search?search=${search}`, {
@@ -54,8 +67,6 @@ export default function NewsPage() {
             });
         event.preventDefault();
     }
-
-    //const pagination = news.length > 5;
 
     return (
         <div>
@@ -95,7 +106,8 @@ export default function NewsPage() {
                                 className="
                                 block
                                 mt-2
-                                border-blue-300
+                                border-blue-200
+                                hover:border-blue-300
                                 rounded
                                 border-[1px]
                                 px-4
@@ -108,7 +120,7 @@ export default function NewsPage() {
                                 <h3 className="text-xl italic mb-0.5">{value.title}</h3>
                                 <p className="text-gray-400 mb-2">{
                                     new Intl.DateTimeFormat(
-                                        "en-US",
+                                        "UK",
                                         {
                                             year: "numeric",
                                             month: "2-digit",
@@ -116,13 +128,13 @@ export default function NewsPage() {
                                             hour: "2-digit",
                                             minute: "2-digit",
                                             second: "2-digit",
-                                            timeZone: "Europe/Athens"
+                                            timeZone: "UTC"
                                         }
                                     ).format(value.date)
                                 }
                                 </p>
                                 <p>{value.body.substring(0, 255)}...</p>
-                                <a href={value.href}>
+                                <a href={value.href} target="_blank">
                                     <input
                                         className="
                                     border
@@ -143,7 +155,13 @@ export default function NewsPage() {
                 </div>
             </div>
 
-            { pagination.total > 5 && <PaginationComponent page={pagination.currentPage}/> }
+            { pagination.total > pagination.perPage && <PaginationComponent
+               perPage={pagination.perPage}
+               totalNews={pagination.total}
+               previousPage={pagination.prevPage}
+               nextPage={pagination.nextPage}
+               paginate={paginate}
+            /> }
             <FooterComponent />
         </div>
     );

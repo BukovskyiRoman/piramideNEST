@@ -1,5 +1,22 @@
-version: '3'
+version: '3.9'
 services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    ports:
+      - 5454:5432
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+  redis:
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - 6000:6379
   nest-app:
     container_name: nest-app
     build:
@@ -9,12 +26,17 @@ services:
     ports:
       - 5000:5000
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
     environment:
       -POSTGRES_DB: "test"
       -POSTGRES_USER: "test"
       -POSTGRES_PASSWORD: "123456789"
+    volumes:
+      - /app/server/node_modules
+      - ./backend_app:/app/server
   react-app:
     container_name: react-app
     build:
@@ -25,22 +47,16 @@ services:
       - 3000:3000
     depends_on:
       - nest-app
-  postgres:
-    container_name: postgres_container
-    image: postgres
-    restart: always
-    ports:
-      - 5454:5432
     volumes:
-      - pg-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - /app/client/node_modules
+      - ./front_app:/app/client
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
     restart: always
+    depends_on:
+      postgres:
+        condition: service_started
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
@@ -48,52 +64,48 @@ services:
       - 5050:80
     volumes:
       - pgadmin-data:/var/lib/pgadmin
-#  mongo:
-#    image: mongo
-#    restart: always
-#    ports:
-#      - 27017:27017
-#    volumes:
-#      - mongo-data:/data/db
-#    environment:
-#      - MONGO_INITDB_ROOT_USERNAME=admin
-#      - MONGO_INITDB_ROOT_PASSWORD=123456789
-#  mongo-express:
-#    image: mongo-express
-#    restart: always
-#    ports:
-#      - 8080:8081
-#    environment:
-#      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-#      - ME_CONFIG_MONGODB_ADMINPASSWORD=123456789
-#      - ME_CONFIG_MONGODB_SERVER=mongo
-  redis:
-    image: redis
-    ports:
-      - 6000:6379
-  migration:
-    build:
-      context: ./backend_app
-    command:
-      [
-        "./wait-for-it/wait-for-it.sh",
-        "postgres:5432",
-        "--",
-        "npm",
-        "run",
-        "typeorm",
-        "--",
-        "migration:run",
-        "-d",
-        "backend_up/src/common/config/ormconfigMigration.ts"
-      ]
-    links:
-      - postgres
-    depends_on:
-      - postgres
+  #  mongo:
+  #    image: mongo
+  #    restart: always
+  #    ports:
+  #      - 27017:27017
+  #    volumes:
+  #      - mongo-data:/data/db
+  #    environment:
+  #      - MONGO_INITDB_ROOT_USERNAME=admin
+  #      - MONGO_INITDB_ROOT_PASSWORD=123456789
+  #  mongo-express:
+  #    image: mongo-express
+  #    restart: always
+  #    ports:
+  #      - 8080:8081
+  #    environment:
+  #      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+  #      - ME_CONFIG_MONGODB_ADMINPASSWORD=123456789
+  #      - ME_CONFIG_MONGODB_SERVER=mongo
+#  migration:
+#    build:
+#      context: ./backend_app
+#    command:
+#      [
+#        "./wait-for-it/wait-for-it.sh",
+#        "postgres:5432",
+#        "--",
+#        "npm",
+#        "run",
+#        "typeorm",
+#        "--",
+#        "migration:run",
+#        "-d",
+#        "backend_up/src/common/config/ormconfigMigration.ts"
+#      ]
+#    links:
+#      - postgres
+#    depends_on:
+#      - postgres
 volumes:
-#  mongo-data:
-#    driver: local
+  #  mongo-data:
+  #    driver: local
   pg-data:
     driver: local
   pgadmin-data:
