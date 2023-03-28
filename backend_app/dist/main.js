@@ -11,14 +11,12 @@ const cookieParser = require("cookie-parser");
 const process = require("process");
 const swagger_1 = require("@nestjs/swagger");
 async function bootstrap() {
-    const app = await core_1.NestFactory.create(app_module_1.AppModule, {
-        cors: {
-            origin: [
-                'http://localhost:3000',
-                'http://107.23.119.30:3000'
-            ],
-            credentials: true,
-        }
+    const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.enableCors({
+        "origin": "*",
+        "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+        "preflightContinue": false,
+        "optionsSuccessStatus": 204
     });
     app.use((0, helmet_1.default)());
     app.use(cookieParser());
@@ -30,7 +28,7 @@ async function bootstrap() {
     app.use(session({
         secret: process.env.SECRET,
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: false
     }));
     passport_1.PassportModule.register({ session: true });
     const config = new swagger_1.DocumentBuilder()

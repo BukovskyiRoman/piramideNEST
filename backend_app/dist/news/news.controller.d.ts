@@ -9,6 +9,9 @@ export declare class NewsController {
         pagination: {
             currentPage: number;
             total: number;
+            prevPage: number;
+            nextPage: number;
+            perPage: number;
         };
     }>;
     searchNews(search: any): Promise<{}>;

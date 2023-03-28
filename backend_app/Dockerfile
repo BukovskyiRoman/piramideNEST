@@ -5,14 +5,16 @@ WORKDIR /app/server
 COPY package*.json .
 COPY tsconfig.json .
 
-RUN npm ci --force &&\
-    npm install db-migrate-pg --force
+RUN npm ci
 
 COPY . .
 
-RUN apk update &&\
-    apk add git &&\
-    git clone https://github.com/vishnubob/wait-for-it.git &&\
-    npm run build
+RUN npm run build
 
-CMD [ "node", "dist/main.js"]
+EXPOSE 5000
+
+#RUN ls && npm run migrate
+
+#CMD [ "node", "dist/main.js"]
+CMD ["sh", "-c", "npm run migrate && npm run start:dev"]
+

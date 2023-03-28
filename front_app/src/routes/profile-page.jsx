@@ -2,23 +2,28 @@ import React, { useEffect, useState } from "react";
 import MainHeaderImage from "../components/main-header-image";
 import MainMenu from "../components/main-menu";
 import { useSelector } from "react-redux";
+import FooterComponent from "../components/footer";
+import { useCookies } from 'react-cookie';
 
 export default function ProfilePage() {
     const [firstName, setFirstName] = useState(null);
     const [lastName, setLastName] = useState(null);
     const [balance, setBalance] = useState(0);
     const [email, setEmail] = useState(null);
+    const [cookies] = useCookies(['user']);
+    const { token } = cookies
 
     const jwt = useSelector(state => state.auth.token);
 
     useEffect(() => {
+        console.log(token);
         const url = 'http://localhost:5000'
-        if (jwt) {
+        if (token) {
             fetch(`${url}/users/profile`, {
                 method: "GET",
                 headers: {
                     "Content-type": "application/json",
-                    "Authorization": `Bearer ${jwt}`
+                    "Authorization": `Bearer ${token}`
                 }
             })
                 .then((response) => response.json()
@@ -38,7 +43,7 @@ export default function ProfilePage() {
             <MainHeaderImage />
             <MainMenu />
             <div className="w-4/5 ml-auto mr-auto mt-2 items-center">
-                {jwt && (
+                {token && (
                     <div>
                         <h1 className="text-2xl text-blue-600">Profile</h1>
                         <div className="block mt-2">
@@ -50,6 +55,7 @@ export default function ProfilePage() {
                     </div>
                 )}
             </div>
+            <FooterComponent />
         </div>
     );
 }

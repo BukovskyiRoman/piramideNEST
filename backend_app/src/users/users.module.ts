@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { MongooseModule } from "@nestjs/mongoose";
-//import { UserEntity, UserSchema } from './schemas/user.schema';
+
 import { UsersController } from "./users.controller";
 import { TransactionModule } from "../transaction/transaction.module";
 import { TypeOrmModule } from "@nestjs/typeorm";

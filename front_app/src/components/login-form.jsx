@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { set } from "../app/features/jwt/jwtSlice";
+import { useCookies } from 'react-cookie';
 
 export default function LoginForm() {
     const [error, setError] = useState(null);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [success, setSuccess] = useState(false);
+    const [cookies, setCookie] = useCookies(['user']);
 
     const dispatch = useDispatch();
 
@@ -20,10 +22,10 @@ export default function LoginForm() {
     }
 
     function handleSubmit(event) {
-        const url = "http://localhost:5000"
+        const url = process.env.URL_BACK;
         //const url = "http://107.23.119.30:5000"
         //const url = "nest-app:5000"
-        fetch(`${url}/auth/login`, {
+        fetch('http://localhost:5000/auth/login', {
             method: "POST",
             headers: {
                 "Content-type": "application/json"
@@ -43,6 +45,7 @@ export default function LoginForm() {
                 if (!result.access_token) {
                     setError(result.message);
                 } else {
+                    setCookie('token', result.access_token, {path: '*'})
                     dispatch(set(result.access_token));
                 }
             });

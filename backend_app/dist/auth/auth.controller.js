@@ -79,7 +79,7 @@ let AuthController = class AuthController {
         return {
             users: 999,
             greeting: "Hello dear friends",
-            deploy: 15,
+            deploy: 16,
             success: true
         };
     }

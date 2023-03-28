@@ -38,7 +38,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TaskService.prototype, "bonusesProcessor", null);
 __decorate([
-    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_MINUTE),
+    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_30_MINUTES),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

@@ -29,9 +29,7 @@ let NewsService = class NewsService {
     }
     async getAllNews(page) {
         const perPage = 5;
-        const skip = (page - 1) * perPage + 1;
-        console.log(page);
-        console.log(skip);
+        const skip = (page - 1) * (perPage);
         const total = await this.newsRepository.count();
         const news = await this.newsRepository.find({
             order: {
@@ -44,7 +42,10 @@ let NewsService = class NewsService {
             news,
             pagination: {
                 currentPage: page ? page : 1,
-                total
+                total,
+                prevPage: Number(page) - 1,
+                nextPage: Number(page) + 1,
+                perPage,
             }
         };
     }
