@@ -15,6 +15,7 @@ import store from "./app/store";
 import ChatPage from "./routes/chat-page";
 import NewsPage from "./routes/news-page";
 import { CookiesProvider } from "react-cookie";
+import SingleNewsPage from "./routes/singleNews-page";
 
 const router = createBrowserRouter([
     {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
     {
         path: "/news",
         element: <NewsPage />
+    },
+    {
+        path: "/news/:id",
+        element: <SingleNewsPage />
     }
 ]);
 

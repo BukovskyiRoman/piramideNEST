@@ -18,6 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const news_entity_1 = require("../entity/news/news.entity");
 const elasticsearch_1 = require("@nestjs/elasticsearch");
+const process = require("process");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const got = require("got");
@@ -28,15 +29,15 @@ let NewsService = class NewsService {
         this.index = "news";
     }
     async getAllNews(page) {
-        const perPage = 5;
-        const skip = (page - 1) * (perPage);
+        const perPage = Number(process.env.REACT_APP_NEWS_PER_PAGE) ? Number(process.env.REACT_APP_NEWS_PER_PAGE) : 5;
+        const skip = (page - 1) * perPage;
         const total = await this.newsRepository.count();
         const news = await this.newsRepository.find({
             order: {
-                date: 'DESC'
+                date: "DESC"
             },
             take: perPage,
-            skip,
+            skip
         });
         return {
             news,
@@ -45,7 +46,7 @@ let NewsService = class NewsService {
                 total,
                 prevPage: Number(page) - 1,
                 nextPage: Number(page) + 1,
-                perPage,
+                perPage
             }
         };
     }
@@ -98,6 +99,11 @@ let NewsService = class NewsService {
         });
         return !news;
     }
+    async getOne(id) {
+        return await this.newsRepository.findOne({
+            where: { id }
+        });
+    }
     async searchNews(search) {
         const result = {};
         let health;
@@ -109,11 +115,11 @@ let NewsService = class NewsService {
         }
         if (health && (health.status === "yellow" || health.status === "green") && search.length) {
             console.log("elastic search");
-            result['news'] = await this.searchElastic(search);
+            result["news"] = await this.searchElastic(search);
         }
         else {
             console.log("typeorm");
-            result['news'] = await this.newsRepository.find({
+            result["news"] = await this.newsRepository.find({
                 where: [
                     { title: (0, typeorm_2.Like)(`%${search}%`) },
                     { body: (0, typeorm_2.Like)(`%${search}%`) }

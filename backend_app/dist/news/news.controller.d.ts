@@ -15,4 +15,7 @@ export declare class NewsController {
         };
     }>;
     searchNews(search: any): Promise<{}>;
+    getOne(params: any): Promise<{
+        news: import("../entity/news/news.entity").News;
+    }>;
 }

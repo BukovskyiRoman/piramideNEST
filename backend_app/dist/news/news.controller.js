@@ -26,23 +26,36 @@ let NewsController = class NewsController {
         return await this.newsService.getAllNews(page ? page : 1);
     }
     async searchNews(search) {
+        console.log(search);
         return await this.newsService.searchNews(search);
+    }
+    async getOne(params) {
+        return {
+            news: await this.newsService.getOne(params.id)
+        };
     }
 };
 __decorate([
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Query)('page')),
+    __param(0, (0, common_1.Query)("page")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], NewsController.prototype, "getNews", null);
 __decorate([
-    (0, common_1.Get)('/search'),
-    __param(0, (0, common_1.Query)('search')),
+    (0, common_1.Get)("/search"),
+    __param(0, (0, common_1.Query)("search")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], NewsController.prototype, "searchNews", null);
+__decorate([
+    (0, common_1.Get)(":id"),
+    __param(0, (0, common_1.Param)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], NewsController.prototype, "getOne", null);
 NewsController = __decorate([
     (0, common_1.Controller)("news"),
     __param(1, (0, common_1.Inject)(nest_winston_1.WINSTON_MODULE_PROVIDER)),
