@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import MainHeaderImage from "../components/main-header-image";
 import MainMenu from "../components/main-menu";
-import { useSelector } from "react-redux";
-import { value } from "lodash/seq";
-import { set } from "../app/features/jwt/jwtSlice";
 import FooterComponent from "../components/footer";
 import PaginationComponent from "../components/pagination-component";
+import axios from "axios";
 
 export default function NewsPage() {
-    //const jwt = useSelector(state => state.auth.token);
     const [search, setSearch] = useState("");
     const [news, setNews] = useState([]);
     const [pagination, setPagination] = useState({
@@ -17,22 +14,15 @@ export default function NewsPage() {
         prevPage: 0,
         nextPage: 2,
         perPage: 5
-    })
+    });
 
     function getNews(page) {
         const url = "http://localhost:5000";
-        fetch(`${url}/news?page=${page}`, {
-            method: "GET",
-            headers: {
-                "Content-type": "application/json"
-            }
-        })
-            .then((response) => response.json()
-            )
-            .then((result) => {
-                setNews(result.news);
-                setPagination(result.pagination)
-            });
+
+        axios.get(`${url}/news?page=${page}`).then(response => {
+            setPagination(response.data.pagination);
+            setNews(response.data.news);
+        });
     }
 
     const paginate = (pageNumber) => {
@@ -40,31 +30,20 @@ export default function NewsPage() {
     };
 
     useEffect(() => {
-        //const url = process.env.URL_BACK;
-        getNews(pagination.currentPage)
+        getNews(pagination.currentPage);
     }, []);
 
-    function searchChange(event) {
+    const searchChange = async (event) => {
         setSearch(event.target.value);
     }
 
     function handleSubmit(event) {
-        const url = "http://localhost:5000";
-        //const url = process.env.URL_BACK;
-        //const url = "http://107.23.119.30:5000"
-        //const url = "nest-app:5000"
-        fetch(`${url}/news/search?search=${search}`, {
-            method: "GET",
-            headers: {
-                "Content-type": "application/json"
-            }
-        })
-            .then((response) => {
-                return response.json();
-            })
-            .then((result) => {
-                setNews(result.news);
-            });
+        const url = process.env.REACT_APP_BASE_URL;
+
+        axios.get(`${url}/news/search?search=${search}`)
+            .then(response => setNews(response.data.news))
+            .catch(error => console.log(error));
+
         event.preventDefault();
     }
 
@@ -117,7 +96,9 @@ export default function NewsPage() {
                                 "
                                 key={index}
                             >
-                                <h3 className="text-xl italic mb-0.5">{value.title}</h3>
+                                <a href={`/news/${value.id}`}>
+                                    <h3 className="text-xl italic mb-0.5">{value.title}</h3>
+                                </a>
                                 <p className="text-gray-400 mb-2">{
                                     new Intl.DateTimeFormat(
                                         "UK",
@@ -155,13 +136,13 @@ export default function NewsPage() {
                 </div>
             </div>
 
-            { pagination.total > pagination.perPage && <PaginationComponent
-               perPage={pagination.perPage}
-               totalNews={pagination.total}
-               previousPage={pagination.prevPage}
-               nextPage={pagination.nextPage}
-               paginate={paginate}
-            /> }
+            {pagination.total > pagination.perPage && <PaginationComponent
+                perPage={pagination.perPage}
+                totalNews={pagination.total}
+                previousPage={pagination.prevPage}
+                nextPage={pagination.nextPage}
+                paginate={paginate}
+            />}
             <FooterComponent />
         </div>
     );

@@ -4,6 +4,7 @@ import { Like, Repository } from "typeorm";
 import { News } from "../entity/news/news.entity";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { SearchHit } from "@elastic/elasticsearch/lib/api/types";
+import * as process from "process";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -21,16 +22,16 @@ export class NewsService {
     }
 
     async getAllNews(page: number) {
-        const perPage = 5         //todo 5 to env
-        const skip = (page - 1) * (perPage)
+        const perPage: number = Number(process.env.REACT_APP_NEWS_PER_PAGE) ? Number(process.env.REACT_APP_NEWS_PER_PAGE): 5 ;
+        const skip: number = (page - 1) * perPage;
 
-        const total = await this.newsRepository.count()
+        const total = await this.newsRepository.count();
         const news = await this.newsRepository.find({
             order: {
-                date: 'DESC'
+                date: "DESC"
             },
             take: perPage,
-            skip,
+            skip
         });
         return {
             news,
@@ -39,7 +40,7 @@ export class NewsService {
                 total,
                 prevPage: Number(page) - 1,
                 nextPage: Number(page) + 1,
-                perPage,
+                perPage
             }
         };
     }
@@ -100,9 +101,15 @@ export class NewsService {
         return !news;
     }
 
+    async getOne(id: number): Promise<News> {
+        return await this.newsRepository.findOne({
+            where: { id }
+        });
+    }
+
     async searchNews(search: string) {
         const result = {};
-        let health
+        let health;
         try {
             health = await this.elasticsearchService.cluster.health();
         } catch (e) {
@@ -111,17 +118,17 @@ export class NewsService {
 
         if (health && (health.status === "yellow" || health.status === "green") && search.length) {
             console.log("elastic search");
-            result['news'] = await this.searchElastic(search);
+            result["news"] = await this.searchElastic(search);
         } else {
             console.log("typeorm");
-            result['news'] = await this.newsRepository.find({
+            result["news"] = await this.newsRepository.find({
                 where: [
                     { title: Like(`%${search}%`) },
                     { body: Like(`%${search}%`) }
                 ]
-            })
+            });
         }
-        return result
+        return result;
     }
 
     async searchElastic(text: string) {

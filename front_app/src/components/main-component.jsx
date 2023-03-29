@@ -9,8 +9,8 @@ export default class MainComponent extends React.Component {
     }
 
     componentDidMount() {
-        const url = process.env.URL_BACK;
-        fetch("http://localhost:5000/auth", {
+        const url = process.env.REACT_APP_BASE_URL;
+        fetch(`${url}/auth`, {
             method: "GET",
             headers: {
                 "Content-type": "application/json"

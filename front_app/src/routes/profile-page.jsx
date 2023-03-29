@@ -17,7 +17,7 @@ export default function ProfilePage() {
 
     useEffect(() => {
         console.log(token);
-        const url = 'http://localhost:5000'
+        const url = process.env.REACT_APP_BASE_URL;
         if (token) {
             fetch(`${url}/users/profile`, {
                 method: "GET",

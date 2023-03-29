@@ -22,10 +22,8 @@ export default function LoginForm() {
     }
 
     function handleSubmit(event) {
-        const url = process.env.URL_BACK;
-        //const url = "http://107.23.119.30:5000"
-        //const url = "nest-app:5000"
-        fetch('http://localhost:5000/auth/login', {
+        const url = process.env.REACT_APP_BASE_URL
+        fetch(`${url}/auth/login`, {
             method: "POST",
             headers: {
                 "Content-type": "application/json"

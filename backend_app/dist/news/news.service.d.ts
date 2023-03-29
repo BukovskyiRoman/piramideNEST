@@ -20,6 +20,7 @@ export declare class NewsService {
     addNews(data: any): Promise<any>;
     getNewsBody(url: string): Promise<string>;
     checkExist(title: string): Promise<boolean>;
+    getOne(id: number): Promise<News>;
     searchNews(search: string): Promise<{}>;
     searchElastic(text: string): Promise<any[]>;
     indexNews(news: News): Promise<void>;
