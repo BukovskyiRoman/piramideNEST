@@ -1,7 +1,7 @@
 import {
     Column,
     Entity,
-    PrimaryGeneratedColumn, Timestamp
+    PrimaryGeneratedColumn
 } from "typeorm";
 
 @Entity('news')

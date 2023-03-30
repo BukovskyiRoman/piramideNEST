@@ -1,16 +1,12 @@
 import {
-    AfterInsert,
-    BeforeInsert, BeforeUpdate,
     Column,
     Entity,
     JoinColumn, ManyToOne, OneToMany,
-    OneToOne,
     PrimaryGeneratedColumn
 } from "typeorm";
 import { Role } from "../../enum/role.enum";
 import { Invite } from "../invite/invite.entity";
 import { Transaction } from "../transaction/transaction.entity";
-import * as bcrypt from "bcrypt";
 import { Exclude } from "class-transformer";
 
 @Entity('user')

@@ -6,8 +6,8 @@ import { DataSource } from "typeorm";
 const config = new DataSource({
     type: "postgres",
     //host: process.env.DATABASE_HOSTNAME,
-    //host: 'postgres',
-    host: 'localhost',
+    host: 'postgres',
+    //host: 'localhost',
     port: Number(process.env.DATABASE_PORT),
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,

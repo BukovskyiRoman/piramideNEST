@@ -9,7 +9,7 @@ import { TelegramService } from "nestjs-telegram";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-const got = require("got");
+import  got  from 'got'
 
 @Injectable()
 export class NewsService {

@@ -22,7 +22,7 @@ const process = require("process");
 const nestjs_telegram_1 = require("nestjs-telegram");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-const got = require("got");
+const got_1 = require("got");
 let NewsService = class NewsService {
     constructor(newsRepository, elasticsearchService, telegram) {
         this.newsRepository = newsRepository;
@@ -58,7 +58,7 @@ let NewsService = class NewsService {
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
         const vgmUrl = `https://gre4ka.info/news/${year}/${month}/${day}`;
-        got(vgmUrl).then(async (response) => {
+        (0, got_1.default)(vgmUrl).then(async (response) => {
             const dom = new JSDOM(response.body);
             const news = dom.window.document.querySelectorAll(".item");
             for (const item of news) {
@@ -86,7 +86,7 @@ let NewsService = class NewsService {
         return news;
     }
     async getNewsBody(url) {
-        let body = got(url).then(async (response) => {
+        let body = (0, got_1.default)(url).then(async (response) => {
             const dom = new JSDOM(response.body);
             body = dom.window.document.querySelector(".content").textContent;
             return body.replace(/\s\s+/g, " ");
