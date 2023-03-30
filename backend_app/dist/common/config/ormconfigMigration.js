@@ -6,7 +6,7 @@ const path = require("path");
 const typeorm_1 = require("typeorm");
 const config = new typeorm_1.DataSource({
     type: "postgres",
-    host: 'postgres',
+    host: 'localhost',
     port: Number(process.env.DATABASE_PORT),
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,

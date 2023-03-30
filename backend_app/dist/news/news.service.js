@@ -19,13 +19,15 @@ const typeorm_2 = require("typeorm");
 const news_entity_1 = require("../entity/news/news.entity");
 const elasticsearch_1 = require("@nestjs/elasticsearch");
 const process = require("process");
+const nestjs_telegram_1 = require("nestjs-telegram");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const got = require("got");
 let NewsService = class NewsService {
-    constructor(newsRepository, elasticsearchService) {
+    constructor(newsRepository, elasticsearchService, telegram) {
         this.newsRepository = newsRepository;
         this.elasticsearchService = elasticsearchService;
+        this.telegram = telegram;
         this.index = "news";
     }
     async getAllNews(page) {
@@ -79,7 +81,9 @@ let NewsService = class NewsService {
         });
     }
     async addNews(data) {
-        return await this.newsRepository.save(data);
+        const news = await this.newsRepository.save(data);
+        await this.telegram.sendMessage(data.title);
+        return news;
     }
     async getNewsBody(url) {
         let body = got(url).then(async (response) => {
@@ -177,7 +181,8 @@ NewsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(news_entity_1.News)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        elasticsearch_1.ElasticsearchService])
+        elasticsearch_1.ElasticsearchService,
+        nestjs_telegram_1.TelegramService])
 ], NewsService);
 exports.NewsService = NewsService;
 //# sourceMappingURL=news.service.js.map

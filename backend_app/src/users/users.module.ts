@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import { UsersService } from "./users.service";
-
 import { UsersController } from "./users.controller";
 import { TransactionModule } from "../transaction/transaction.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -12,7 +11,6 @@ import { Transaction } from "../entity/transaction/transaction.entity";
     providers: [UsersService],
     exports: [UsersService],
     imports: [
-        //MongooseModule.forFeature([{ name: UserEntity.name, schema: UserSchema }]),
         TransactionModule,
         TypeOrmModule.forFeature([User, Invite, Transaction])
     ],

@@ -14,13 +14,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NewsController = void 0;
 const common_1 = require("@nestjs/common");
-const nest_winston_1 = require("nest-winston");
-const winston_1 = require("winston");
 const news_service_1 = require("./news.service");
 let NewsController = class NewsController {
-    constructor(newsService, logger) {
+    constructor(newsService) {
         this.newsService = newsService;
-        this.logger = logger;
     }
     async getNews(page) {
         return await this.newsService.getAllNews(page ? page : 1);
@@ -58,9 +55,7 @@ __decorate([
 ], NewsController.prototype, "getOne", null);
 NewsController = __decorate([
     (0, common_1.Controller)("news"),
-    __param(1, (0, common_1.Inject)(nest_winston_1.WINSTON_MODULE_PROVIDER)),
-    __metadata("design:paramtypes", [news_service_1.NewsService,
-        winston_1.Logger])
+    __metadata("design:paramtypes", [news_service_1.NewsService])
 ], NewsController);
 exports.NewsController = NewsController;
 //# sourceMappingURL=news.controller.js.map

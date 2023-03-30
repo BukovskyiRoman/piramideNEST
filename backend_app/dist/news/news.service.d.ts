@@ -1,11 +1,13 @@
 import { Repository } from "typeorm";
 import { News } from "../entity/news/news.entity";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
+import { TelegramService } from "nestjs-telegram";
 export declare class NewsService {
     private newsRepository;
     private readonly elasticsearchService;
+    private readonly telegram;
     index: string;
-    constructor(newsRepository: Repository<News>, elasticsearchService: ElasticsearchService);
+    constructor(newsRepository: Repository<News>, elasticsearchService: ElasticsearchService, telegram: TelegramService);
     getAllNews(page: number): Promise<{
         news: News[];
         pagination: {

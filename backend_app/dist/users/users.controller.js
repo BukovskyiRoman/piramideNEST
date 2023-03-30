@@ -41,8 +41,6 @@ let UsersController = class UsersController {
         await this.userService.addUsersTransaction(user, money, false);
     }
     async getUserProfile(req) {
-        console.log(req.session.visits);
-        console.log(req.cookies);
         return await this.userService.findOne(req.user.email, true, true, true);
     }
 };

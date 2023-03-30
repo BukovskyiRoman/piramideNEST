@@ -5,6 +5,7 @@ import { News } from "../entity/news/news.entity";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { SearchHit } from "@elastic/elasticsearch/lib/api/types";
 import * as process from "process";
+import { TelegramService } from "nestjs-telegram";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -17,7 +18,8 @@ export class NewsService {
     constructor(
         @InjectRepository(News)
         private newsRepository: Repository<News>,
-        private readonly elasticsearchService: ElasticsearchService
+        private readonly elasticsearchService: ElasticsearchService,
+        private readonly telegram: TelegramService,
     ) {
     }
 
@@ -33,6 +35,7 @@ export class NewsService {
             take: perPage,
             skip
         });
+
         return {
             news,
             pagination: {
@@ -77,8 +80,14 @@ export class NewsService {
         });
     }
 
+    /**
+     * Method for adding news to db
+     * @param data news data
+     */
     async addNews(data) {
-        return await this.newsRepository.save(data);
+        const news = await this.newsRepository.save(data);
+        await this.telegram.sendMessage(data.title)
+        return news;
     }
 
     async getNewsBody(url: string): Promise<string> {

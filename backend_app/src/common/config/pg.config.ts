@@ -6,8 +6,8 @@ import { DataSource } from "typeorm";
 
 export default registerAs("database", (): PostgresConnectionOptions => ({
             type: "postgres",
-            host: 'postgres',
-            //host: "localhost",
+            //host: 'postgres',
+            host: "localhost",
             port: Number(process.env.DATABASE_PORT),
             username: process.env.DATABASE_USERNAME,
             password: process.env.DATABASE_PASSWORD,

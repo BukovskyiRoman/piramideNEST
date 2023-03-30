@@ -35,7 +35,7 @@ services:
       -POSTGRES_USER: "test"
       -POSTGRES_PASSWORD: "123456789"
     volumes:
-      - /app/server/node_modules
+#      - /app/server/node_modules
       - ./backend_app:/app/server
   react-app:
     container_name: react-app
@@ -48,7 +48,7 @@ services:
     depends_on:
       - nest-app
     volumes:
-      - /app/client/node_modules
+#      - /app/client/node_modules
       - ./front_app:/app/client
   pgadmin:
     container_name: pgadmin4_container
@@ -64,48 +64,7 @@ services:
       - 5050:80
     volumes:
       - pgadmin-data:/var/lib/pgadmin
-  #  mongo:
-  #    image: mongo
-  #    restart: always
-  #    ports:
-  #      - 27017:27017
-  #    volumes:
-  #      - mongo-data:/data/db
-  #    environment:
-  #      - MONGO_INITDB_ROOT_USERNAME=admin
-  #      - MONGO_INITDB_ROOT_PASSWORD=123456789
-  #  mongo-express:
-  #    image: mongo-express
-  #    restart: always
-  #    ports:
-  #      - 8080:8081
-  #    environment:
-  #      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-  #      - ME_CONFIG_MONGODB_ADMINPASSWORD=123456789
-  #      - ME_CONFIG_MONGODB_SERVER=mongo
-#  migration:
-#    build:
-#      context: ./backend_app
-#    command:
-#      [
-#        "./wait-for-it/wait-for-it.sh",
-#        "postgres:5432",
-#        "--",
-#        "npm",
-#        "run",
-#        "typeorm",
-#        "--",
-#        "migration:run",
-#        "-d",
-#        "backend_up/src/common/config/ormconfigMigration.ts"
-#      ]
-#    links:
-#      - postgres
-#    depends_on:
-#      - postgres
 volumes:
-  #  mongo-data:
-  #    driver: local
   pg-data:
     driver: local
   pgadmin-data:

@@ -1,5 +1,4 @@
 import { Body, Controller, Get, HttpCode, Param, Patch, Req, UseGuards } from "@nestjs/common";
-
 import { UsersService } from "./users.service";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { Roles } from "../decorator/roles.decorator";
@@ -85,8 +84,8 @@ export class UsersController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.Investor, Role.User)
     async getUserProfile(@Req() req) {
-        console.log(req.session.visits)
-        console.log(req.cookies);
+        // console.log(req.session.visits)
+        // console.log(req.cookies);
         return await this.userService.findOne(req.user.email, true, true, true);
     }
 }
