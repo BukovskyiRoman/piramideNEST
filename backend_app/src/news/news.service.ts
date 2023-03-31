@@ -3,13 +3,21 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Repository } from "typeorm";
 import { News } from "../entity/news/news.entity";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
-import { SearchHit } from "@elastic/elasticsearch/lib/api/types";
 import * as process from "process";
-import { TelegramService } from "nestjs-telegram";
+import got from "got";
+import { InjectBot } from 'nestjs-telegraf';
+import { Telegraf } from 'telegraf';
+import {
+    Update,
+    Ctx,
+    Start,
+    Help,
+    On,
+    Hears,
+} from 'nestjs-telegraf';
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-import  got  from 'got'
 
 @Injectable()
 export class NewsService {
@@ -19,7 +27,7 @@ export class NewsService {
         @InjectRepository(News)
         private newsRepository: Repository<News>,
         private readonly elasticsearchService: ElasticsearchService,
-        private readonly telegram: TelegramService,
+        @InjectBot() private bot: Telegraf,
     ) {
     }
 
@@ -35,6 +43,8 @@ export class NewsService {
             take: perPage,
             skip
         });
+
+
 
         return {
             news,
@@ -85,9 +95,8 @@ export class NewsService {
      * @param data news data
      */
     async addNews(data) {
-        const news = await this.newsRepository.save(data);
-        await this.telegram.sendMessage(data.title)
-        return news;
+        await this.bot.telegram.sendMessage('260443983', `${data.title} <br> ${data.href}`)
+        return await this.newsRepository.save(data);
     }
 
     async getNewsBody(url: string): Promise<string> {

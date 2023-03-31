@@ -5,7 +5,7 @@ const process = require("process");
 const path = require("path");
 exports.default = (0, config_1.registerAs)("database", () => ({
     type: "postgres",
-    host: "localhost",
+    host: 'postgres',
     port: Number(process.env.DATABASE_PORT),
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,

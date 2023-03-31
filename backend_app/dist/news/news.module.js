@@ -13,8 +13,7 @@ const news_controller_1 = require("./news.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const news_entity_1 = require("../entity/news/news.entity");
 const elasticsearch_1 = require("@nestjs/elasticsearch");
-const nestjs_telegram_1 = require("nestjs-telegram");
-const config_1 = require("@nestjs/config");
+const nestjs_telegraf_1 = require("nestjs-telegraf");
 let NewsModule = class NewsModule {
 };
 NewsModule = __decorate([
@@ -29,11 +28,8 @@ NewsModule = __decorate([
                     node: "http://127.0.0.1:9200",
                 })
             }),
-            nestjs_telegram_1.TelegramModule.forRootAsync({
-                useFactory: async (configService) => ({
-                    botKey: configService.get(process.env.TELEGRAM_TOKEN)
-                }),
-                inject: [config_1.ConfigService]
+            nestjs_telegraf_1.TelegrafModule.forRoot({
+                token: '451572208:AAH0n2cIwjvNwvOVWYZ-lCUB0BIPM9XcSUY',
             })
         ]
     })

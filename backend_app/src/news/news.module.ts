@@ -4,9 +4,7 @@ import { NewsController } from "./news.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { News } from "../entity/news/news.entity";
 import { ElasticsearchModule } from "@nestjs/elasticsearch";
-import * as fs from "fs";
-import { TelegramModule } from "nestjs-telegram";
-import { ConfigService } from "@nestjs/config";
+import { TelegrafModule } from 'nestjs-telegraf';
 
 @Module({
     providers: [NewsService],
@@ -18,11 +16,8 @@ import { ConfigService } from "@nestjs/config";
             useFactory: () => ({
                 node: "http://127.0.0.1:9200",
             })}),
-        TelegramModule.forRootAsync({
-            useFactory: async (configService: ConfigService) => ({
-                botKey: configService.get(process.env.TELEGRAM_TOKEN)
-            }),
-            inject: [ConfigService]
+        TelegrafModule.forRoot({
+            token: '451572208:AAH0n2cIwjvNwvOVWYZ-lCUB0BIPM9XcSUY',
         })
     ]
 })
