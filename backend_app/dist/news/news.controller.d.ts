@@ -4,7 +4,7 @@ export declare class NewsController {
     private newsService;
     private readonly logger;
     constructor(newsService: NewsService, logger: Logger);
-    getNews(page: any): Promise<{
+    getNews(page: any, sort: any): Promise<{
         news: import("../entity/news/news.entity").News[];
         pagination: {
             currentPage: number;

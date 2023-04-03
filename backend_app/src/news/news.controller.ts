@@ -12,13 +12,16 @@ export class NewsController {
     }
 
     @Get()
-    async getNews(@Query("page") page) {
-        return await this.newsService.getAllNews(page ? page : 1);
+    async getNews(
+        @Query("page") page,
+        @Query("sort") sort
+    ) {
+
+        return await this.newsService.getAllNews(page ? page : 1, sort === 'DESC');
     }
 
     @Get("/search")
     async searchNews(@Query("search") search) {
-        console.log(search);
         return await this.newsService.searchNews(search);
     }
 

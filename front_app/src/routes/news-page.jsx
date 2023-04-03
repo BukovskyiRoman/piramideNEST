@@ -8,6 +8,8 @@ import axios from "axios";
 export default function NewsPage() {
     const [search, setSearch] = useState("");
     const [news, setNews] = useState([]);
+    const [sort, setSort] = useState('DESC');
+
     const [pagination, setPagination] = useState({
         total: 0,
         currentPage: 1,
@@ -19,7 +21,13 @@ export default function NewsPage() {
     function getNews(page) {
         const url = "http://localhost:5000";
 
-        axios.get(`${url}/news?page=${page}`).then(response => {
+        axios.get(`${url}/news`, {
+            params: {
+                sort,
+                page
+            }
+        })
+            .then(response => {
             setPagination(response.data.pagination);
             setNews(response.data.news);
         });
@@ -31,7 +39,7 @@ export default function NewsPage() {
 
     useEffect(() => {
         getNews(pagination.currentPage);
-    }, []);
+    }, [sort]);
 
     const searchChange = async (event) => {
         setSearch(event.target.value);
@@ -40,11 +48,19 @@ export default function NewsPage() {
     function handleSubmit(event) {
         const url = process.env.REACT_APP_BASE_URL;
 
-        axios.get(`${url}/news/search?search=${search}`)
+        axios.get(`${url}/news/`, {
+            params: {
+                search
+            }
+        })
             .then(response => setNews(response.data.news))
             .catch(error => console.log(error));
 
         event.preventDefault();
+    }
+
+    const sortChange = (event) => {
+        setSort(event.target.value)
     }
 
     return (
@@ -56,9 +72,9 @@ export default function NewsPage() {
                     <div className="flex justify-between">
                         <div className="flex">
                             <h1 className="text-2xl text-blue-600 mr-4">News</h1>
-                            <select className="rounded-xl bg-blue-50 pr-4">
-                                <option>Desc</option>
-                                <option>ASC</option>
+                            <select className="rounded-xl bg-blue-50 pr-4" onChange={sortChange}>
+                                <option value="DESC">Desc</option>
+                                <option value="ASC">ASC</option>
                             </select>
                         </div>
 
@@ -125,6 +141,7 @@ export default function NewsPage() {
                                     rounded-2xl
                                     mt-3
                                     hover:border-blue-400
+                                    cursor-pointer
                                     "
                                         type="button"
                                         value="Go to source"
@@ -142,6 +159,7 @@ export default function NewsPage() {
                 previousPage={pagination.prevPage}
                 nextPage={pagination.nextPage}
                 paginate={paginate}
+                curPage={pagination.currentPage}
             />}
             <FooterComponent />
         </div>

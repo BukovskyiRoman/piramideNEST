@@ -7,14 +7,7 @@ import * as process from "process";
 import got from "got";
 import { InjectBot } from 'nestjs-telegraf';
 import { Telegraf } from 'telegraf';
-import {
-    Update,
-    Ctx,
-    Start,
-    Help,
-    On,
-    Hears,
-} from 'nestjs-telegraf';
+import { isBoolean } from "class-validator";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -31,20 +24,18 @@ export class NewsService {
     ) {
     }
 
-    async getAllNews(page: number) {
+    async getAllNews(page: number, sort: boolean) {
         const perPage: number = Number(process.env.REACT_APP_NEWS_PER_PAGE) ? Number(process.env.REACT_APP_NEWS_PER_PAGE): 5 ;
         const skip: number = (page - 1) * perPage;
 
         const total = await this.newsRepository.count();
         const news = await this.newsRepository.find({
             order: {
-                date: "DESC"
+                date: sort ? "DESC" : "ASC"
             },
             take: perPage,
             skip
         });
-
-
 
         return {
             news,
@@ -74,7 +65,7 @@ export class NewsService {
                 const href = item.querySelector("a").href;
                 const title = item.querySelector("a").textContent;
 
-                if (await this.checkExist(title)) {
+                if (!await this.checkExist(title)) {
                     const data = await this.addNews({
                         source: "Grechka",
                         title,
@@ -91,11 +82,14 @@ export class NewsService {
     }
 
     /**
-     * Method for adding news to db
+     * Method for adding news to db and telegram
      * @param data news data
      */
     async addNews(data) {
-        await this.bot.telegram.sendMessage('260443983', `${data.title} <br> ${data.href}`)
+        await this.bot.telegram.sendMessage(
+            '260443983',
+            `${data.title} \n ${data.href}`
+        );
         return await this.newsRepository.save(data);
     }
 
@@ -111,14 +105,18 @@ export class NewsService {
     }
 
     async checkExist(title: string): Promise<boolean> {
-        const news = await this.newsRepository.findOne({
+        const news = await this.newsRepository.count({
             where: {
                 title
             }
         });
-        return !news;
+        return news > 0;
     }
 
+    /**
+     * Method for news search by id
+     * @param id
+     */
     async getOne(id: number): Promise<News> {
         return await this.newsRepository.findOne({
             where: { id }

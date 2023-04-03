@@ -6,15 +6,20 @@ import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { User } from "../entity/user/user.entity";
 import { INestApplication } from "@nestjs/common";
-import { TelegramService } from "nestjs-telegram";
+import { Telegraf } from "telegraf";
+import { TelegrafModule } from "nestjs-telegraf";
+import { agent } from "supertest";
+import process from "process";
+import * as http from "http";
+const { createMock } = require('telegraf-test');
 
 describe("NewsService", () => {
     let newsService: NewsService;
     let repository: Repository<User>;
     let testingModule: TestingModule;
     let elasticService: ElasticsearchService;
-    let telegramService: TelegramService
     let app: INestApplication;
+    let bot:  Telegraf;
 
     beforeEach(async () => {
         const currentDate = new Date().toISOString();
@@ -23,7 +28,7 @@ describe("NewsService", () => {
             providers: [
                 NewsService,
                 ElasticsearchService,
-                TelegramService,
+                Telegraf,
                 {
                     provide: getRepositoryToken(News),
                     useValue: {
@@ -47,37 +52,32 @@ describe("NewsService", () => {
                     useValue: {
                         getElasticSearchData: jest.fn()
                     }
-                },
-                {
-                    provide: TelegramService,
-                    useValue: {
-                        data: jest.fn()
-                    }
                 }
             ],
             imports: [
-                // TypeOrmModule.forRoot({
-                //     type: "postgres",
-                //     host: "localhost",
-                //     port: 5432,
-                //     username: "test",
-                //     password: "123456789",
-                //     database: "test",
-                //     entities: [News],
-                //     autoLoadEntities: true
-                // })
-                // ElasticsearchModule.registerAsync({
-                //     useFactory: () => ({
-                //         node: "http://127.0.0.1:9200",
-                //     })})
+                TypeOrmModule.forRoot({
+                    type: "postgres",
+                    host: "localhost",
+                    port: 5432,
+                    username: "test",
+                    password: "123456789",
+                    database: "unit",
+                    entities: [News],
+                    autoLoadEntities: true
+                }),
+                TelegrafModule.forRoot({
+                    token: '451572208:AAH0n2cIwjvNwvOVWYZ-lCUB0BIPM9XcSUY'
+                })
             ]
         })
+            .overrideProvider(Telegraf)
+            .useValue(true)
             .compile();
 
         repository = testingModule.get(getRepositoryToken(News));
         elasticService = testingModule.get<ElasticsearchService>(ElasticsearchService);
         newsService = testingModule.get<NewsService>(NewsService);
-        telegramService = testingModule.get(TelegramService)
+       // bot = new Telegraf('451572208:AAH0n2cIwjvNwvOVWYZ-lCUB0BIPM9XcSUY', { telegram: { } })
 
         app = testingModule.createNestApplication();
         await app.init();

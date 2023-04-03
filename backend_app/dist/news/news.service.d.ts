@@ -8,7 +8,7 @@ export declare class NewsService {
     private bot;
     index: string;
     constructor(newsRepository: Repository<News>, elasticsearchService: ElasticsearchService, bot: Telegraf);
-    getAllNews(page: number): Promise<{
+    getAllNews(page: number, sort: boolean): Promise<{
         news: News[];
         pagination: {
             currentPage: number;

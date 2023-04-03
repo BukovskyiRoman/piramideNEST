@@ -5,6 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { News } from "../entity/news/news.entity";
 import { ElasticsearchModule } from "@nestjs/elasticsearch";
 import { TelegrafModule } from 'nestjs-telegraf';
+import * as process from "process";
 
 @Module({
     providers: [NewsService],
@@ -17,7 +18,8 @@ import { TelegrafModule } from 'nestjs-telegraf';
                 node: "http://127.0.0.1:9200",
             })}),
         TelegrafModule.forRoot({
-            token: '451572208:AAH0n2cIwjvNwvOVWYZ-lCUB0BIPM9XcSUY',
+            //token: process.env.TELEGRAM_TOKEN,
+            token: '451572208:AAH0n2cIwjvNwvOVWYZ-lCUB0BIPM9XcSUY'
         })
     ]
 })

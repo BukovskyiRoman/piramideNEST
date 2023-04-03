@@ -29,7 +29,7 @@ NewsModule = __decorate([
                 })
             }),
             nestjs_telegraf_1.TelegrafModule.forRoot({
-                token: '451572208:AAH0n2cIwjvNwvOVWYZ-lCUB0BIPM9XcSUY',
+                token: '451572208:AAH0n2cIwjvNwvOVWYZ-lCUB0BIPM9XcSUY'
             })
         ]
     })

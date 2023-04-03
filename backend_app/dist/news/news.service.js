@@ -31,13 +31,13 @@ let NewsService = class NewsService {
         this.bot = bot;
         this.index = "news";
     }
-    async getAllNews(page) {
+    async getAllNews(page, sort) {
         const perPage = Number(process.env.REACT_APP_NEWS_PER_PAGE) ? Number(process.env.REACT_APP_NEWS_PER_PAGE) : 5;
         const skip = (page - 1) * perPage;
         const total = await this.newsRepository.count();
         const news = await this.newsRepository.find({
             order: {
-                date: "DESC"
+                date: sort ? "DESC" : "ASC"
             },
             take: perPage,
             skip
@@ -66,7 +66,7 @@ let NewsService = class NewsService {
                 const time = item.querySelector(".mytime").textContent;
                 const href = item.querySelector("a").href;
                 const title = item.querySelector("a").textContent;
-                if (await this.checkExist(title)) {
+                if (!await this.checkExist(title)) {
                     const data = await this.addNews({
                         source: "Grechka",
                         title,
@@ -82,7 +82,7 @@ let NewsService = class NewsService {
         });
     }
     async addNews(data) {
-        await this.bot.telegram.sendMessage('260443983', `${data.title} <br> ${data.href}`);
+        await this.bot.telegram.sendMessage('260443983', `${data.title} \n ${data.href}`);
         return await this.newsRepository.save(data);
     }
     async getNewsBody(url) {
@@ -96,12 +96,12 @@ let NewsService = class NewsService {
         return body;
     }
     async checkExist(title) {
-        const news = await this.newsRepository.findOne({
+        const news = await this.newsRepository.count({
             where: {
                 title
             }
         });
-        return !news;
+        return news > 0;
     }
     async getOne(id) {
         return await this.newsRepository.findOne({

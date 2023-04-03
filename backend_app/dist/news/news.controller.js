@@ -22,11 +22,10 @@ let NewsController = class NewsController {
         this.newsService = newsService;
         this.logger = logger;
     }
-    async getNews(page) {
-        return await this.newsService.getAllNews(page ? page : 1);
+    async getNews(page, sort) {
+        return await this.newsService.getAllNews(page ? page : 1, sort === 'DESC');
     }
     async searchNews(search) {
-        console.log(search);
         return await this.newsService.searchNews(search);
     }
     async getOne(params) {
@@ -38,8 +37,9 @@ let NewsController = class NewsController {
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)("page")),
+    __param(1, (0, common_1.Query)("sort")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], NewsController.prototype, "getNews", null);
 __decorate([
