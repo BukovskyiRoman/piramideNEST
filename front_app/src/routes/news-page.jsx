@@ -8,7 +8,7 @@ import axios from "axios";
 export default function NewsPage() {
     const [search, setSearch] = useState("");
     const [news, setNews] = useState([]);
-    const [sort, setSort] = useState('DESC');
+    const [sort, setSort] = useState("DESC");
 
     const [pagination, setPagination] = useState({
         total: 0,
@@ -18,7 +18,10 @@ export default function NewsPage() {
         perPage: 5
     });
 
+    const pages = Math.ceil(pagination.total / pagination.perPage);
+
     function getNews(page) {
+
         const url = "http://localhost:5000";
 
         axios.get(`${url}/news`, {
@@ -28,13 +31,15 @@ export default function NewsPage() {
             }
         })
             .then(response => {
-            setPagination(response.data.pagination);
-            setNews(response.data.news);
-        });
+                setPagination(response.data.pagination);
+                setNews(response.data.news);
+            });
     }
 
     const paginate = (pageNumber) => {
-        getNews(pageNumber);
+        if (pageNumber >= 1 && pageNumber <= pages) {
+            getNews(pageNumber);
+        }
     };
 
     useEffect(() => {
@@ -43,7 +48,7 @@ export default function NewsPage() {
 
     const searchChange = async (event) => {
         setSearch(event.target.value);
-    }
+    };
 
     function handleSubmit(event) {
         const url = process.env.REACT_APP_BASE_URL;
@@ -60,8 +65,8 @@ export default function NewsPage() {
     }
 
     const sortChange = (event) => {
-        setSort(event.target.value)
-    }
+        setSort(event.target.value);
+    };
 
     return (
         <div>
@@ -160,7 +165,9 @@ export default function NewsPage() {
                 nextPage={pagination.nextPage}
                 paginate={paginate}
                 curPage={pagination.currentPage}
+                pages={pages}
             />}
+
             <FooterComponent />
         </div>
     );
